@@ -2,4 +2,4 @@ pycryptodome
 beautifulsoup4
 requests 
 autoslot
-pronotepy 
+pronotepy
