@@ -6,7 +6,7 @@ from pronotepy.ent import ent_auvergnerhonealpe
 
 client = pronotepy.Client('https://0693446w.index-education.net/pronote/eleve.html',
                       username='h.camarasabira',
-                      password='X',
+                      password='Patat0_Val2',
                       ent=ent_auvergnerhonealpe) # ent specific
 
 if not client.logged_in:
@@ -28,13 +28,21 @@ def trimestre(n):
 
 def calcul_moy_matiere(trim):
     trim = trimestre(trim)
-    grades = []
+    coefficients = {}
     moyennes = {} # subject : average
     for grade in trim.grades:
-        moyennes[grade.subject.name.replace(" ","_")]=float(grade.grade.replace(",",".")) + moyennes[grade.subject.name]
+        if grade.subject.name in moyennes:
+            moyennes[grade.subject.name] += float(grade.grade.replace(",",".")) * float(grade.coefficient)
+            coefficients[grade.subject.name] += float(grade.coefficient)
+        else:
+            moyennes[grade.subject.name] = float(grade.grade.replace(",",".")) * float(grade.coefficient)
+            coefficients[grade.subject.name] = float(grade.coefficient)
+    for key in moyennes.keys():
+        moyennes[key] = round(moyennes[key] / coefficients[key],2)
     return moyennes
 
 print(calcul_moy_matiere(1))
+
 
 # def calc_moy_generale(trim):
     
