@@ -6,7 +6,7 @@ from pronotepy.ent import ent_auvergnerhonealpe
 
 client = pronotepy.Client('https://0693446w.index-education.net/pronote/eleve.html',
                       username='h.camarasabira',
-                      password='Patat0_Val2',
+                      password='X',
                       ent=ent_auvergnerhonealpe) # ent specific
 
 if not client.logged_in:
