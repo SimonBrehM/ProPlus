@@ -1,3 +1,5 @@
+wheel
+setuptools
 pycryptodome
 beautifulsoup4
 requests 

@@ -1,3 +1,3 @@
 # ProPlus 
 
-### Third-party app for Pronote. Runs on localhost within brower
+### Third-party app for Pronote. Runs on localhost within browser
