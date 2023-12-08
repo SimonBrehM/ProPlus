@@ -1,3 +1,4 @@
+![Logo](static/img/logo.png)
 ProPlus 
 ======
 
