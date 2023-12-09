@@ -57,3 +57,5 @@ def calcul_moy_generale(trim:int):
     return round(moyenne_g / len(calcul_moy_matiere(trim)), 2)
     # type : float
 
+def matieres():
+    return [subject for subject in client.subject.name]
