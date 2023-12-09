@@ -58,4 +58,9 @@ def calcul_moy_generale(trim:int):
     # type : float
 
 def matieres():
-    return [subject for subject in client.subject.name]
+    a = []
+    for x in trimestre(1).grades:
+        if x.subject.name not in a:    
+            a.append(x.subject.name)
+    return a
+
