@@ -19,7 +19,7 @@ def trimestre(n:int):
     # list periods
     for period in client.periods:
         period_list.append(period)
-    return period_list[n-1]
+    return period_list[n-1] # try return client.periods[n]
     # type : object
 
 def calc_avg_subject(trim:int):
