@@ -31,7 +31,8 @@ def calcul_moy_matiere(trim):
     grades = []
     moyennes = {} # subject : average
     for grade in trim.grades:
-        moyennes[grade.subject.name.replace(" ","_")]=float(grade.grade.replace(",",".")) + moyennes[grade.subject.name]
+        print(grade.subject.name.replace(" ","_"))
+        # moyennes[grade.subject.name.replace(" ","_")]=float(grade.grade.replace(",",".")) + moyennes[grade.subject.name]
     return moyennes
 
 print(calcul_moy_matiere(1))
