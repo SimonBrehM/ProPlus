@@ -6,7 +6,7 @@ from pronotepy.ent import ent_auvergnerhonealpe
 
 client = pronotepy.Client('https://0693446w.index-education.net/pronote/eleve.html',
                       username='h.camarasabira',
-                      password='X',
+                      password='Patat0_Val2',
                       ent=ent_auvergnerhonealpe) # ent specific
 
 if not client.logged_in:
@@ -15,12 +15,10 @@ if not client.logged_in:
 
 def trimestre(n:int):
     """Function that returns the period we want, coming from a number"""
-    period_list = []
-    # list periods
-    for period in client.periods:
-        period_list.append(period)
-    return period_list[n-1] # try return client.periods[n]
+    return client.periods[n-1]
     # type : object
+
+print(trimestre(1).name)
 
 def calc_avg_subject(trim:int):
     """"Calculates the average of the student on every subject for an certain period"""
@@ -29,11 +27,6 @@ def calc_avg_subject(trim:int):
     averages = {}
     # averages = {subject : grade out of 20}
     for grade in trim.grades:
-<<<<<<< HEAD
-        print(grade.subject.name.replace(" ","_"))
-        # moyennes[grade.subject.name.replace(" ","_")]=float(grade.grade.replace(",",".")) + moyennes[grade.subject.name]
-    return moyennes
-=======
         if grade.subject.name in averages:
             averages[grade.subject.name] += (float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient)
             coefficients[grade.subject.name] += float(grade.coefficient)
@@ -44,7 +37,7 @@ def calc_avg_subject(trim:int):
         averages[key] = round(averages[key] / coefficients[key],2)
     return averages
     # type : dict
->>>>>>> 3caf59ad89a8bbf55fa8dadfb59968844aac99e6
+
 
 
 def calc_overall_avg(trim:int):
