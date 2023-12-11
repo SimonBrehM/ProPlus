@@ -6,7 +6,7 @@ from pronotepy.ent import ent_auvergnerhonealpe
 
 client = pronotepy.Client('https://0693446w.index-education.net/pronote/eleve.html',
                       username='h.camarasabira',
-                      password='Patat0_Val2',
+                      password='X',
                       ent=ent_auvergnerhonealpe) # ent specific
 
 if not client.logged_in:
@@ -17,8 +17,6 @@ def trimestre(n:int):
     """Function that returns the period we want, coming from a number"""
     return client.periods[n-1]
     # type : object
-
-print(trimestre(1).name)
 
 def calc_avg_subject(trim:int):
     """"Calculates the average of the student on every subject for an certain period"""
