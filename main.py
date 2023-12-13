@@ -12,7 +12,15 @@ from pronotepy.ent import ent_auvergnerhonealpe
 # importing ent specific function, you do not need to import anything if you dont use an ent
 
 client = pronotepy.Client('https://0693446w.index-education.net/pronote/eleve.html',
+<<<<<<< HEAD
                       username='X',
+=======
+<<<<<<< HEAD
+                      username='h.camarasa',
+=======
+                      username='X',
+>>>>>>> bee80fedc456f2aa2dd5d282199482b1c691f461
+>>>>>>> fff30e57eef4afa043d91e07f5d5ec058f29b16a
                       password='X',
                       ent=ent_auvergnerhonealpe) # ent specific
 
@@ -32,7 +40,7 @@ def calc_avg_subject(trim:int):
     averages = {}
     # averages = {subject : grade out of 20}
     for grade in trim.grades:
-        if grade.grade in ["Absent","NonNote","Inapte"]:
+        if grade.grade in ["Absent","NonNote","Inapte","NonRendu"]:
             pass
         elif grade.subject.name in averages:
             averages[grade.subject.name] += (float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient)
@@ -71,7 +79,7 @@ def grades_specs(trim:int):
     notes_dict = {}
     # notes_dict = {subject : [actual grade : float, grade.out_of : float, grade.coefficient : float, grade description : str, is grade good for subject average : bool, is grade over class average : bool]}
     for grade in trimestre(trim).grades:
-        if grade.grade in ["Absent","NonNote","Inapte"]:
+        if grade.grade in ["Absent","NonNote","Inapte","NonRendu":
             if grade.subject.name in notes_dict:
                 notes_dict[grade.subject.name] += [grade.grade , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, None, None]
             else:
