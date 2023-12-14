@@ -12,7 +12,7 @@ from pronotepy.ent import ent_auvergnerhonealpe
 # importing ent specific function, you do not need to import anything if you dont use an ent
 
 def get_id():
-  """Returns the 2 inputs of the user : their id and their password""""
+  """Returns the 2 inputs of the user : their id and their password"""
   u_id = input("Entrez votre identifiant :  ")
   u_pwd = input("Entrez votre mot de passe :  ")
   return [u_id, u_pwd]
@@ -92,7 +92,7 @@ def calc_avg_subject(trim:int):
     return averages
     # type : dict
 
-def calc_overall_avg(trim:int):
+def calc_avg_overall(trim:int):
     """Calculates the overall average of the student for a certain period"""
     overall_avg = 0
     subject_avg = calc_avg_subject(trim)
@@ -128,3 +128,4 @@ def grades_specs(trim:int):
     return notes_dict
     # type : dict
 
+print(grades_specs(1))
