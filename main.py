@@ -12,11 +12,7 @@ from pronotepy.ent import ent_auvergnerhonealpe
 # importing ent specific function, you do not need to import anything if you dont use an ent
 
 client = pronotepy.Client('https://0693446w.index-education.net/pronote/eleve.html',
-<<<<<<< HEAD
-                      username='h.camarasa',
-=======
                       username='X',
->>>>>>> bee80fedc456f2aa2dd5d282199482b1c691f461
                       password='X',
                       ent=ent_auvergnerhonealpe) # ent specific
 
