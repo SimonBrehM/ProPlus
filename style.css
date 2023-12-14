@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,700;1,300;1,700&display=swap');
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: #FAF9F9;
+    color: black;
+    margin: 0;
+    padding: 0;
+}
+
+.header div, img {
+    display: inline-block;
+    position: relative;
+}
+
+.title h2, h3 {
+    display: inline-block;
+    padding-top: 0%;
+} 
+
+#forPronote {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: small;
+    margin-left: 5px;
+}
+
+.header {
+    border-bottom: black 1px solid;
+    padding: 0.25rem;
+}
+
+.header-items {
+    align-items: center;
+}
+
+#logo {
+    width: 10%;
+    padding-right: 2%;
+    position: relative;
+    border-right: 2px black solid;
+}
