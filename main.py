@@ -31,13 +31,8 @@ with open("uids.txt", "a") as file:
 
 
 client = pronotepy.Client('https://0693446w.index-education.net/pronote/eleve.html',
-<<<<<<< HEAD
-                      username='X',
-                      password='X',
-=======
                       username = u_ids[0],
                       password = u_ids[1],
->>>>>>> master
                       ent=ent_auvergnerhonealpe) # ent specific
 
 if not client.logged_in:
@@ -97,14 +92,7 @@ def calc_avg_subject(trim:int):
     return averages
     # type : dict
 
-<<<<<<< HEAD
-# update calc_avg_subject so it takes into account the optionnal and bonus notes
-# grade.is_optionnal : bool    |    grade.is_bonus : bool
-
-def calc_overall_avg(trim:int):
-=======
 def calc_avg_overall(trim:int):
->>>>>>> master
     """Calculates the overall average of the student for a certain period"""
     overall_avg = 0
     subject_avg = calc_avg_subject(trim)
