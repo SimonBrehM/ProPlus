@@ -5,4 +5,4 @@ beautifulsoup4
 requests 
 autoslot
 pronotepy
-virtualenv
+flask
