@@ -58,10 +58,10 @@ def calc_overall_avg(trim:int):
     # type : float
 
 
-def matieres():
+def get_subjects(trim:int):
     """Returns all the subjects in a list"""
     subjects = []
-    for x in trimestre(1).grades:
+    for x in trimestre(trim).grades:
         if x.subject.name not in subjects:    
             subjects.append(x.subject.name)
     return subjects
