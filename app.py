@@ -9,8 +9,11 @@ trimester = 1
 inputs = None
 
 def get_content():
+    global inputs
     subjects = get_subjects(trimester)
-    inputs = {"subjects":subjects}
+    averages = calc_avg_subject(trimester)
+    grades = grades_specs(trimester)
+    inputs = {"subjects":subjects, "averages":averages, "grades":grades}
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -21,7 +24,7 @@ def index():
             get_data(input_username, input_password)
             get_content()
             return render_template('content.html', inputs=inputs)
-        except Exception:
+        except pronotepy.exceptions.ENTLoginError:
             login_failed = True
             return render_template('login.html', login_failed=login_failed)
     else:
