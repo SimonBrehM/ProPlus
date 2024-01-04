@@ -90,12 +90,16 @@ def extract_all_grades_db():
         grd_list.append(grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period)
     return grd_list
 
+subjects = None
+trimester = 1
+inputs = None
+
 def get_content():
-    subjects = matieres()
-    averages = calc_avg_subject(1)
-    grades = grades_specs(1)
+    global inputs
+    subjects = get_subjects(trimester)
+    averages = calc_avg_subject(trimester)
+    grades = grades_specs(trimester)
     inputs = {"subjects":subjects, "averages":averages, "grades":grades}
-    return inputs
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -104,11 +108,11 @@ def index():
         input_password = request.form['password']
         try:
             get_data(input_username, input_password)
-            inputs = get_content()
+            get_content()
             return render_template('content.html', inputs=inputs)
-        except Exception as ex:
+        except pronotepy.exceptions.ENTLoginError:
             login_failed = True
-            return render_template('login.html', login_failed=login_failed, ex=ex)
+            return render_template('login.html', login_failed=login_failed)
     else:
         return render_template("login.html")
 
