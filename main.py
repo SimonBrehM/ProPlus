@@ -14,6 +14,7 @@ from pronotepy.ent import ent_auvergnerhonealpe
 client = None
 
 def get_data(username, password):
+    global client
     client = pronotepy.Client('https://0693446w.index-education.net/pronote/eleve.html',
                         username=username,
                         password=password,
@@ -83,3 +84,8 @@ def grades_specs(trim:int):
             notes_dict[grade.subject.name] = [float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, float(grade.grade.replace(",",".")) >calc_avg_subject(trim)[grade.subject.name], float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",","."))]
     return notes_dict
     # type : dict
+
+def convert_to_100(grade:float, out_of:float):
+    """"Returns the parameter (a grade) into a grade out of 100"""
+    return round(grade / out_of * 100,2)
+    # type : float
