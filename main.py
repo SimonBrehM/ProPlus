@@ -89,3 +89,7 @@ def convert_to_100(grade:float, out_of:float):
     """"Returns the parameter (a grade) into a grade out of 100"""
     return round(grade / out_of * 100,2)
     # type : float
+
+def calc_avg_evol(avg_old:float,avg_new:float):
+    return round((avg_new-avg_old)/avg_old * 100, 2)
+    # type : float
