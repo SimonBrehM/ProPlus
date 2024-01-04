@@ -6,14 +6,13 @@ from datetime import datetime
 app = Flask(__name__)
 login_failed = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db = SQLAlchemy()
-db.init_app(app)
+db = SQLAlchemy(app)
 
 class Averages(db.Model):
-    date = db.Column(db.DateTime, primary_key = True)
+    id = db.Column(db.Integer, primary_key = True)
+    date = db.Column(db.String) # date when the data was inseted, format : YYYY-MM-DD HH-MM-SS.SSSSSS
     period = db.Column(db.String)
     avg_overall = db.Column(db.Float)
-    avg_subjects = db.Column(db.Float)
 
 class Subjects(db.Model):
     name = db.Column(db.String, primary_key = True)
@@ -25,11 +24,52 @@ class Grades(db.Model):
     out_of = db.Column(db.Float)
     coeff = db.Column(db.Float)
     description = db.Column(db.String)
-    benefical = db.Column(db.Boolean)
-    above_class_avg = db.Column(db.Boolean)
-    avg_class = db.Column(db.Float, foreign_key = True)
-    subject = db.Column(db.String, foreign_key = True)
+    benefical = db.Column(db.Boolean) # grade > subject_avg
+    above_class_avg = db.Column(db.Boolean) # grade > class_avg
+    avg_class = db.Column(db.Float)
+    subject = db.Column(db.String)
     period = db.Column(db.String)
+
+@app.before_request
+def create_tables():
+    db.create_all() #db creation
+
+def create_subjects_db(trim:int): # creation and filling table "Subjects"
+    subjects_avg = calc_avg_subject(trim)
+    for subject in subjects_avg.keys():
+        sbj = Subjects(name = subject, avg = subjects_avg[subject])
+        db.session.add(sbj)
+        db.session.commit()
+
+def create_averages_db(trim:int): # creation and filling table "Averages"
+    avg = Averages(date = datetime.now(), period = trimestre(trim).name(), avg_overall = calc_overall_avg(trim))
+    db.session.add(avg)
+    db.session.commit()
+
+def create_grades_db(trim:int): # creation and filling table "Grades"
+    all_grades = grades_specs(trim)
+    trim_str = trimestre(trim)
+    for sbj in all_grades:
+        for grd in all_grades[sbj]:
+            grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = sbj, period = trim_str)
+            db.session.add(grade)
+            db.session.commit()
+
+def commit_averages_db(avg_period, avg_avg_overall): # adding 1 elt to table "Averages"
+    avg = Averages(date = datetime.now(), period = avg_period, avg_overall = avg_avg_overall)
+    db.session.add(avg)
+    db.session.commit()
+
+def commit_subjects_db(sbj_name, sbj_avg): # adding 1 elt to table "Subjects"
+    subject = Subjects(name = sbj_name, avg = sbj_avg)
+    db.session.add(subject)
+    db.session.commit()
+
+def commit_grades_db(grd_actual_grade, grd_out_of, grd_coeff, grd_desc, grd_benef, grd_above_class, grd_class_avg, grd_sbj, grd_period): # adding 1 elt to table "Grades"
+    grade = Grades(actual_grade = grd_actual_grade, out_of = grd_out_of, coeff = grd_coeff, description = grd_desc, benefical = grd_benef, above_class_avg = grd_above_class, avg_class = grd_class_avg, subject = grd_sbj, period = grd_period)
+    db.session.add(grade)
+    db.session.commit()
+
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -42,7 +82,6 @@ def index():
         except:
             login_failed = True
             return render_template('login.html', login_failed=login_failed)
-        
     else:
         return render_template("login.html")
 
