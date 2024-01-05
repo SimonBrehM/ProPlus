@@ -93,3 +93,11 @@ def convert_to_100(grade:float, out_of:float):
 def calc_avg_evol(avg_old:float,avg_new:float):
     return round((avg_new-avg_old)/avg_old * 100, 2)
     # type : float
+
+def get_periods():
+    global client
+    global periods
+    periodes = {}
+    for period in client.periods:
+        periodes[period.name] = index(period.name)
+    return periodes

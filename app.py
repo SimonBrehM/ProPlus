@@ -5,7 +5,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 login_failed = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
 class Averages(db.Model):
@@ -33,68 +33,124 @@ class Grades(db.Model):
 def create_tables():
     db.create_all() #db creation
 
-def create_subjects_db(trim:int): # creation and filling table "Subjects"
+# *********************
+# FIRST TABLE ELEMENTS CREATION AND FILLING FUNCTIONS
+# *********************
+
+def create_subjects_db(trim:int):
+    """
+    Creation of all the subjects avilable in the table Subjects
+    CAUTION : it does NOT take into account previous subjects added into the db, use it for the launch of the db or an error will appear relative to the primary key
+    """
     subjects_avg = calc_avg_subject(trim)
     for subject in subjects_avg.keys():
         sbj = Subjects(name = subject, avg = subjects_avg[subject])
         db.session.add(sbj)
-        db.session.commit()
+    db.session.commit()
+    # /!\ returns None
 
-def create_averages_db(trim:int): # creation and filling table "Averages"
+def create_averages_db(trim:int):
+    """
+    Creation of an element in the table Averages coming from the period (trim)
+    """
     avg = Averages(date = str(datetime.now()), period = trimestre(trim).name(), avg_overall = calc_overall_avg(trim))
     db.session.add(avg)
     db.session.commit()
+    # /!\ returns None
 
-def create_grades_db(trim:int): # creation and filling table "Grades"
+def create_grades_db(trim:int):
+    """
+    Creation of all the grades available in the table Grades coming from the period (trim)
+    CAUTION : it does NOT take into account previous grades added into the db, use it for the launch of the db or you'll insert grades multiples times
+    """
     all_grades = grades_specs(trim)
     trim_str = trimestre(trim).name()
     for sbj in all_grades:
         for grd in all_grades[sbj]:
             grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = sbj, period = trim_str)
             db.session.add(grade)
-            db.session.commit()
+    db.session.commit()
+    # /!\ returns None
 
-def commit_averages_db(avg_period, avg_avg_overall): # adding 1 elt to table "Averages"
+# *********************
+# *********************
+
+# *********************
+# COMMIT / ADD ONE ELEMENT FUNCTIONS
+# *********************
+
+def commit_averages_db(avg_period:str, avg_avg_overall:float):
+    """
+    Commits one element to the table Averages coming from its period and the overall average
+    """
     avg = Averages(date = str(datetime.now()), period = avg_period, avg_overall = avg_avg_overall)
     db.session.add(avg)
     db.session.commit()
+    # /!\ returns None
 
-def commit_subjects_db(sbj_name, sbj_avg): # adding 1 elt to table "Subjects"
+def commit_subjects_db(sbj_name:str, sbj_avg:float):
+    """
+    Commits one element to the table Subjects coming from its name (/!\ primary key) and the average in this subject
+    """
     subject = Subjects(name = sbj_name, avg = sbj_avg)
     db.session.add(subject)
     db.session.commit()
+    # /!\ returns None
 
-def commit_grades_db(grd_actual_grade, grd_out_of, grd_coeff, grd_desc, grd_benef, grd_above_class, grd_class_avg, grd_sbj, grd_period): # adding 1 elt to table "Grades"
+def commit_grades_db(grd_actual_grade:float, grd_out_of:float, grd_coeff:float, grd_desc:str, grd_benef:bool, grd_above_class:bool, grd_class_avg:float, grd_sbj:str, grd_period:str):
+    """
+    Commits one element to the table Grades coming from the actual grade, the out_of, the coefficient, the description, if its benefical for the subjects average, if its above the class average, the class average, the subject and its period
+    """
     grade = Grades(actual_grade = grd_actual_grade, out_of = grd_out_of, coeff = grd_coeff, description = grd_desc, benefical = grd_benef, above_class_avg = grd_above_class, avg_class = grd_class_avg, subject = grd_sbj, period = grd_period)
     db.session.add(grade)
     db.session.commit()
+    # /!\ returns None
+
+# *********************
+# *********************
+
+# *********************
+# EXTRACTION FUNCTIONS
+# *********************
 
 def extract_all_averages_db():
+    """Extracts EVERY element from the table Averages and returns it on the form of a list"""
     all_avg = Averages.query.all()
     avg_list = []
     for avg in all_avg:
         avg_list.append(avg.date, avg.period, avg.avg_overall)
     return avg_list
+    # type : list
 
 def extract_all_subjects_db():
+    """Extracts EVERY element from the table Subjects and returns it on the form of a list"""
     all_sbj = Subjects.query.all()
     sbj_list = []
     for sbj in all_sbj:
-        sbj_list.append(sbj.name, sbj.avg)
+        sbj_list.append([sbj.name, sbj.avg])
     return sbj_list
+    # type : list
 
 def extract_all_grades_db():
+    """Extracts EVERY element from the table Grades and returns it on the form of a list"""
     all_grd = Grades.query.all()
     grd_list = []
     for grd in all_grd:
         grd_list.append(grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period)
     return grd_list
+    # type : list
+
+# *********************
+# *********************
 
 subjects = None
 trimester = 1
 inputs = None
 
 def get_content():
+    """
+    Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
+    """
     global inputs
     subjects = get_subjects(trimester)
     averages = calc_avg_subject(trimester)
