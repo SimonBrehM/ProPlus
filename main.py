@@ -97,7 +97,7 @@ def calc_avg_evol(avg_old:float,avg_new:float):
 def get_periods():
     global client
     global periods
-    periodes = {}
+    periodes = {} ; n=0
     for period in client.periods:
-        periodes[period.name] = index(period.name)
+        periodes[period.name] = (n+1)
     return periodes
