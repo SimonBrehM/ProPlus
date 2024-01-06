@@ -8,6 +8,10 @@ login_failed = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
+# *********************
+# TABLES OF THE DATABASE
+# *********************
+
 class Averages(db.Model):
     date = db.Column(db.String, primary_key=True) # date when the data was inseted, format : YYYY-MM-DD HH-MM-SS.SSSSSS
     period = db.Column(db.String)
@@ -28,6 +32,9 @@ class Grades(db.Model):
     avg_class = db.Column(db.Float)
     subject = db.Column(db.String)
     period = db.Column(db.String)
+
+# *********************
+# *********************
 
 @app.before_request
 def create_tables():
@@ -64,10 +71,9 @@ def create_grades_db(trim:int):
     CAUTION : it does NOT take into account previous grades added into the db, use it for the launch of the db or you'll insert grades multiples times
     """
     all_grades = grades_specs(trim)
-    trim_str = trimestre(trim).name()
     for sbj in all_grades:
         for grd in all_grades[sbj]:
-            grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = sbj, period = trim_str)
+            grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = grd[7], period = grd[8])
             db.session.add(grade)
     db.session.commit()
     # /!\ returns None
@@ -139,6 +145,42 @@ def extract_all_grades_db():
         grd_list.append(grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period)
     return grd_list
     # type : list
+
+# *********************
+# *********************
+
+# *********************
+# UPDATING FUNCTIONS
+# *********************
+
+def update_grades(trim:int):
+    """
+    Updates the table Grades : adds only the grades that are not already in the database
+    """
+    existing_grades = Grades.query.all()
+    new_grades = grades_specs(trim)
+    existing_grade_specs = set((grade.desc,grade.subject,grade.period) for grade in existing_grades)
+    grades_to_add = [value for grade in new_grades for value in new_grades[grade] if (value[3],grade,value[7]) not in existing_grade_specs]
+    for grd in grades_to_add:
+        new_grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = grd[7], period = grd[8])
+        db.session.add(new_grade)
+    db.session.commit()
+    # /!\ returns None
+
+def update_subjects(trim:int):
+    """
+    Updates the table Subjects : adds only the subjects that are not already in the database
+    """
+    existing_subjects = Subjects.query.all()
+    existing_subjects_names = set(subject.name for subject in existing_subjects)
+    new_subjects = get_subjects(trim)
+    subjects_avg = calc_avg_subject(trim)
+    subjects_to_add = [subject for subject in new_subjects if subject not in existing_subjects_names]
+    for sbj in subjects_to_add:
+        new_subject = Subjects(name = sbj, avg = subjects_avg[sbj])
+        db.session.add(new_subject)
+    db.session.commit()
+    # /!\ returns None
 
 # *********************
 # *********************
