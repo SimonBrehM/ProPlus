@@ -1,12 +1,8 @@
-from flask import Flask, render_template, url_for, request, redirect
+from flask import render_template, url_for, request, redirect
 from database import *
 from main import *
 
-app = Flask(__name__)
-
 login_failed = False
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-db = SQLAlchemy(app)
 
 @app.before_request
 def create_tables():
