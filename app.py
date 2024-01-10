@@ -6,8 +6,6 @@ from datetime import datetime
 app = Flask(__name__)
 
 login_failed = False
-<<<<<<< HEAD
-=======
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
@@ -188,18 +186,14 @@ def update_subjects(trim:int):
 # *********************
 # *********************
 
->>>>>>> d0ec73b27b446a9e0efff8bcccb224ba1aa07831
 subjects = None
 trimester = 1
 inputs = None
 
 def get_content():
-<<<<<<< HEAD
-=======
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
->>>>>>> d0ec73b27b446a9e0efff8bcccb224ba1aa07831
     global inputs
     subjects = get_subjects(trimester)
     averages = calc_avg_subject(trimester)
