@@ -19,6 +19,7 @@ def get_data(username, password):
                         username=username,
                         password=password,
                         ent=ent_auvergnerhonealpe) # ent specific
+    print(client)
 
     if not client.logged_in:
         exit(1)  # the client has failed to log in
@@ -30,22 +31,24 @@ def trimestre(n:int):
     # type : object
 
 def calc_avg_subject(trim:int):
-    """"Calculates the average of the student on every subject for an certain period"""
+    """Calculates the average of the student on every subject for an certain period"""
     trim = trimestre(trim)
     coefficients = {}
     averages = {}
     # averages = {subject : grade out of 20}
     for grade in trim.grades:
         if grade.grade in ("Absent","NonNote","Inapte","NonRendu"):
-            pass
-        elif grade.subject.name in averages:
+            if grade.subject.name not in averages:
+                averages[grade.subject.name] = grade.grade
+        elif grade.subject.name in averages and averages[grade.subject.name] not in ("Absent","NonNote","Inapte","NonRendu"):
             averages[grade.subject.name] += (float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient)
             coefficients[grade.subject.name] += float(grade.coefficient)
         else:
             averages[grade.subject.name] = (float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient)
             coefficients[grade.subject.name] = float(grade.coefficient)
-    for key in averages.keys():
-        averages[key] = round(averages[key] / coefficients[key],2)
+    for key in averages:
+        if averages[key] not in ("Absent","NonNote","Inapte","NonRendu"):
+            averages[key] = round(averages[key] / coefficients[key],2)
     return averages
     # type : dict
 
