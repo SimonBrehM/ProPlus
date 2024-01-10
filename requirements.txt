@@ -6,3 +6,7 @@ requests
 autoslot
 pronotepy
 flask
+<<<<<<< HEAD
+=======
+flask_sqlalchemy
+>>>>>>> d0ec73b27b446a9e0efff8bcccb224ba1aa07831
