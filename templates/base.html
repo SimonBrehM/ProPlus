@@ -1,18 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <!--Meta data-->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 
     <link rel="icon" href="static/img/logo.png">
 
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <title>ProPlus</title>
+    {% block head %}{% endblock %}
 </head>
 
 <body>
+    <!--Header zone-->
     <div class="main-container">
         <div class="header">
             <div class="header-items">
@@ -21,23 +25,13 @@
                     <h2 id="proplus">ProPlus</h2>
                     <h3 id="forPronote">for Pronote</h3>
                 </div>
+                {% block header %}{% endblock %} 
             </div>
         </div>
         
-        <div class="sidebar">
-            <div class="graph">
-
-            </div>
         </div>
 
-        <div class="contents">
-            <div class="content-block">
-                <div class="content-header"></div>
-                <div id="content-list">
-
-                </div>
-            </div>
-        </div>
+        {% block body %}{% endblock %}
     </div>
 </body>
 </html>

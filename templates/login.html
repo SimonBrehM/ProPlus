@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+<div class="outside-login">
+    <img src="static/img/logo.png" alt="logo" id="login-logo">
+    <h2 id="enter-ENT">Enter ENT login info</h2>
+</div>
+<div class="login-box">
+    <div class="login-inputs">
+        <form action="/" method="POST">
+            <h2>Username</h2>
+            <input type="text" name="username" id="username-input">
+            <h2>Password</h2>
+            <input type="password" name="password" id="password-input">
+            {% if login_failed %}
+            <div class="error-container">
+                <h2 id="fail-message">Incorrect username or password</h2>
+            </div>
+            {% endif %}
+            <input type="submit" value="Log In" id="submit-button">
+        </form>
+    </div>
+</div>
+{% endblock %}

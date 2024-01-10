@@ -5,3 +5,5 @@ beautifulsoup4
 requests 
 autoslot
 pronotepy
+flask
+flask_sqlalchemy
