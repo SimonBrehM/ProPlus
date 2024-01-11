@@ -1,6 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from main import *
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -54,7 +55,7 @@ def create_averages_db(trim:int):
     """
     Creation of an element in the table Averages coming from the period (trim)
     """
-    avg = Averages(date = str(datetime.now()), period = trimestre(trim).name(), avg_overall = calc_overall_avg(trim))
+    avg = Averages(date = str(datetime.now()), period = trimestre(trim).name, avg_overall = calc_overall_avg(trim))
     db.session.add(avg)
     db.session.commit()
     # /!\ returns None
@@ -64,7 +65,7 @@ def create_grades_db(trim:int):
     Creation of all the grades available in the table Grades coming from the period (trim)
     CAUTION : it does NOT take into account previous grades added into the db, use it for the launch of the db or you'll insert grades multiples times
     """
-    all_grades = grades_specs(trim)
+    all_grades = anal_grades(trim)
     for sbj in all_grades:
         for grd in all_grades[sbj]:
             grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = grd[7], period = grd[8])
@@ -118,7 +119,7 @@ def extract_all_averages_db():
     all_avg = Averages.query.all()
     avg_list = []
     for avg in all_avg:
-        avg_list.append(avg.date, avg.period, avg.avg_overall)
+        avg_list.append([avg.date, avg.period, avg.avg_overall])
     return avg_list
     # type : list
 
@@ -136,7 +137,7 @@ def extract_all_grades_db():
     all_grd = Grades.query.all()
     grd_list = []
     for grd in all_grd:
-        grd_list.append(grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period)
+        grd_list.append([grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period])
     return grd_list
     # type : list
 
@@ -152,7 +153,7 @@ def update_grades(trim:int):
     Updates the table Grades : adds only the grades that are not already in the database
     """
     existing_grades = Grades.query.all()
-    new_grades = grades_specs(trim)
+    new_grades = anal_grades(trim)
     existing_grade_specs = set((grade.desc,grade.subject,grade.period) for grade in existing_grades)
     grades_to_add = [value for grade in new_grades for value in new_grades[grade] if (value[3],grade,value[7]) not in existing_grade_specs]
     for grd in grades_to_add:

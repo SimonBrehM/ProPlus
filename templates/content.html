@@ -12,6 +12,16 @@
 <div class="grade-box">
     <div class="grade-header"><!--Refresh icon--></div>
     <div class="scrollable-menu">
+        <div class="test">
+            <form action="/period_selector" method="POST">
+                <select name="period_selector" id="period_selector">
+                    {% for period in periods %}
+                    <option value="{{ period }}">{{ period }}</option>
+                    {% endfor %}
+                </select>
+                <input type="submit" value="submit">
+            </form>
+        </div>
         {% for subject in inputs.subjects %}
         <div class="subject-container">
             <div class="subject-icons">
