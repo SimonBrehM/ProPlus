@@ -12,19 +12,32 @@
 <div class="grade-box">
     <div class="grade-header"><!--Refresh icon--></div>
     <div class="scrollable-menu">
+        <div class="selector-container">
+            <form action="/period_selector" method="POST">
+                <select name="period_selector" id="period_selector" onchange="this.form.submit()">
+                    {% for period in periods %}
+                    <option value="{{ period }}">{{ period }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            <form action="/update_db" method="post">
+                <input type="submit" value="Update the database">
+            </form>
+        </div>
+
         {% for subject in inputs.subjects %}
         <div class="subject-container">
             <div class="subject-icons">
                 <!--drop down icon-->
-                <img src="static/img/logo.png" alt="fill-in" id>
+                <img src="static/img/logo.png" alt="fill-in" id="grade-icon">
             </div>
             <div class="subject-description">
-                <h2>{{ subject }}</h2>
+                <h2>{{ subject[0] }}</h2>
                 <!-- progress bar -->
-                <h2>coef</h2>
             </div>
-            <div class="subject-average"><h2>{{ inputs.averages[subject] }}</h2></div>
+            <div class="subject-average"><h2>{{ subject[1] }}</h2></div>
         </div>
+        <!--
         <div class="grades-container">
             {% for grade in inputs.grades[subject] %}
             <div class="grade-container">
@@ -35,6 +48,7 @@
             <div class="grade-coef"><h2>{{ grade[3] }}</h2></div>
             {% endfor %}
         </div>
+        -->
         {% endfor %}
     </div>
 </div>
