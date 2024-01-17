@@ -20,6 +20,9 @@
                     {% endfor %}
                 </select>
             </form>
+            <form action="/update_db" method="post">
+                <input type="submit" value="Update the database">
+            </form>
         </div>
 
         {% for subject in inputs.subjects %}
@@ -29,10 +32,10 @@
                 <img src="static/img/logo.png" alt="fill-in" id="grade-icon">
             </div>
             <div class="subject-description">
-                <h2>{{ subject }}</h2>
+                <h2>{{ subject[0] }}</h2>
                 <!-- progress bar -->
             </div>
-            <div class="subject-average"><h2>{{ inputs.averages[subject] }}</h2></div>
+            <div class="subject-average"><h2>{{ subject[1] }}</h2></div>
         </div>
         <!--
         <div class="grades-container">

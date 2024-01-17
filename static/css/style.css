@@ -116,11 +116,8 @@ body {
     padding: 2%;
     border-radius: 15px;
     background-color: #ef6b6b;
-}
-
-.subject-container div {
-    display: inline-block;
-    position: relative;
+    display: flex;
+    justify-content: space-between;
 }
 
 .subject-icons img {
@@ -130,4 +127,26 @@ body {
 
 .subject-icons {
     width: 8%;
+}
+
+.subject-average {
+    text-align: right;
+}
+
+.subject-description {
+    text-align: center;
+}
+
+.sidebar {
+    height: 100%; 
+    width: 35%;
+    position: absolute; 
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden; 
+    padding-top: 20px;
+}
+
+.grade-box {
+    margin-left: 35%;
 }

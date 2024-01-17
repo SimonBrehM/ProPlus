@@ -14,21 +14,21 @@ db = SQLAlchemy(app)
 class Averages(db.Model):
     date = db.Column(db.String, primary_key=True) # date when the data was inseted, format : YYYY-MM-DD HH-MM-SS.SSSSSS
     period = db.Column(db.String)
-    avg_overall = db.Column(db.Float)
+    avg_overall = db.Column(db.String)
 
 class Subjects(db.Model):
     name = db.Column(db.String, primary_key = True)
-    avg = db.Column(db.Float)
+    avg = db.Column(db.String)
 
 class Grades(db.Model):
     id = db.Column(db.Integer, primary_key = True)
-    actual_grade = db.Column(db.Float)
+    actual_grade = db.Column(db.String)
     out_of = db.Column(db.Float)
     coeff = db.Column(db.Float)
     description = db.Column(db.String)
     benefical = db.Column(db.Boolean) # grade > subject_avg
     above_class_avg = db.Column(db.Boolean) # grade > class_avg
-    avg_class = db.Column(db.Float)
+    avg_class = db.Column(db.String)
     subject = db.Column(db.String)
     period = db.Column(db.String)
 
@@ -154,7 +154,7 @@ def update_grades(trim:int):
     """
     existing_grades = Grades.query.all()
     new_grades = anal_grades(trim)
-    existing_grade_specs = set((grade.desc,grade.subject,grade.period) for grade in existing_grades)
+    existing_grade_specs = set((grade.description,grade.subject,grade.period) for grade in existing_grades)
     grades_to_add = [value for grade in new_grades for value in new_grades[grade] if (value[3],grade,value[7]) not in existing_grade_specs]
     for grd in grades_to_add:
         new_grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = grd[7], period = grd[8])
