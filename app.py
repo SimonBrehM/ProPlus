@@ -11,7 +11,7 @@ def index():
         input_password = request.form['password']
         try:
             get_data(input_username, input_password)
-            return "success"
+            return render_template('content.html')
         except:
             login_failed = True
             return render_template('login.html', login_failed=login_failed)
