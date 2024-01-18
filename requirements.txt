@@ -6,3 +6,4 @@ requests
 autoslot
 pronotepy
 flask
+flask_sqlalchemy
