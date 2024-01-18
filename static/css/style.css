@@ -7,6 +7,7 @@ body {
     color: black;
     margin: 0;
     padding: 0;
+    overflow-y: hidden;
 }
 
 .header div, img {
@@ -142,11 +143,34 @@ body {
     width: 35%;
     position: absolute; 
     left: 0;
-    background-color: #111;
     overflow-x: hidden; 
     padding-top: 20px;
+    border-right: lightgray 1px solid;
 }
 
 .grade-box {
-    margin-left: 35%;
+    margin: 3% 1% 0 36%;
+}
+
+.grade-header div {
+    display: inline-block;
+    position: relative;
+}
+
+.grade-header {
+    padding: 4% 2%;
+    border-radius: 15px 15px 0 0;
+    border: #111 solid 2px;
+}
+
+.scrollable-menu {
+    overflow-y: scroll;
+    position: absolute;
+    height: 100%;
+    border: #111 solid 2px;
+}
+
+.scroll-footer {
+    position: relative;
+    height: 8%;
 }

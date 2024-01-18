@@ -10,9 +10,8 @@
 </div>
 
 <div class="grade-box">
-    <div class="grade-header"><!--Refresh icon--></div>
-    <div class="scrollable-menu">
-        <div class="selector-container">
+    <div class="grade-header">
+        <div class="trimester-selector">
             <form action="/period_selector" method="POST">
                 <select name="period_selector" id="period_selector" onchange="this.form.submit()">
                     {% for period in periods %}
@@ -20,11 +19,15 @@
                     {% endfor %}
                 </select>
             </form>
+        </div>
+        <div class="update-button">
             <form action="/update_db" method="post">
                 <input type="submit" value="Update the database">
             </form>
         </div>
-
+        <!--Refresh icon-->
+    </div>
+    <div class="scrollable-menu">
         {% for subject in inputs.subjects %}
         <div class="subject-container">
             <div class="subject-icons">
@@ -50,6 +53,7 @@
         </div>
         -->
         {% endfor %}
+        <div class="scroll-footer"></div>
     </div>
 </div>
 {% endblock %}
