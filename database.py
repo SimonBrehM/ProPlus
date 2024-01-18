@@ -44,7 +44,7 @@ def create_subjects_db(trim:int):
     Creation of all the subjects avilable in the table Subjects
     CAUTION : it does NOT take into account previous subjects added into the db, use it for the launch of the db or an error will appear relative to the primary key
     """
-    subjects_avg = calc_avg_subject(trim)
+    subjects_avg = calc_avg_subject(trim)[0]
     for subject in subjects_avg.keys():
         sbj = Subjects(name = subject, avg = subjects_avg[subject])
         db.session.add(sbj)
@@ -169,7 +169,7 @@ def update_subjects_db(trim:int):
     existing_subjects = Subjects.query.all()
     existing_subjects_names = set(subject.name for subject in existing_subjects)
     new_subjects = get_subjects(trim)
-    subjects_avg = calc_avg_subject(trim)
+    subjects_avg = calc_avg_subject(trim)[0]
     subjects_to_add = [subject for subject in new_subjects if subject not in existing_subjects_names]
     for sbj in subjects_to_add:
         new_subject = Subjects(name = sbj, avg = subjects_avg[sbj])

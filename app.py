@@ -5,12 +5,17 @@ from main import *
 login_failed = False
 run_counter = 0
 
+@app.before_request
 def create_tables():
+    db.create_all() #db creation
+
+def fill_tables():
+    global run_counter
     if run_counter == 0:
-        db.create_all() #db creation
         update_subjects_db(1)
-        update_grades_db(1)
         create_averages_db(1)
+        update_grades_db(1)
+
 
 subjects = None
 trimester = 1
@@ -24,7 +29,8 @@ def get_content():
     global inputs, periods
     subject_averages = extract_all_subjects_db()
     grades = extract_all_grades_db()
-    inputs = {"subjects":subject_averages, "grades":grades}
+    averages = extract_all_averages_db()
+    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages}
     periods = get_periods()
 
 @app.route('/', methods=['POST', 'GET'])
@@ -35,7 +41,7 @@ def index():
         try:
             global run_counter
             get_data(input_username, input_password)
-            create_tables()
+            fill_tables()
             run_counter += 1
             get_content()
             return render_template('content.html', inputs=inputs, periods=periods)
@@ -65,6 +71,15 @@ def update_db():
     get_content()
     return render_template('content.html', inputs=inputs, periods=periods)
 
+def predict_grade(grade:float, out_of:float, subject:int, period:int): # subject : position in a list
+    prediction = []
+    global inputs
+    subject_avg = inputs["subjects"][subject][1]
+    subject_coeff = calc_avg_subject(period)[1][subjectname]
+    
+
+    return prediction
+    # type list
 
 if __name__=='__main__':
     app.run(debug=True)

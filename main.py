@@ -53,16 +53,16 @@ def calc_avg_subject(trim:int):
     for key in averages:
         if averages[key] not in ("Absent","NonNote","Inapte","NonRendu"):
             averages[key] = round(averages[key] / coefficients[key],2)
-    return averages
+    return averages, coefficients
     # type : dict
 
 def calc_avg_overall(trim:int):
     """Calculates the overall average of the student for a certain period"""
     overall_avg = 0
-    subject_avg = calc_avg_subject(trim)
-    for avg in subject_avg.values():
-        overall_avg += avg
-    return round(overall_avg / len(subject_avg), 2)
+    for moy in calc_avg_subject(trim)[0].values():
+        if moy not in ("Absent","NonNote","Inapte","NonRendu"):
+            overall_avg += moy
+    return round(overall_avg / len(calc_avg_subject(trim)[0]), 2)
     # type : float
 
 
@@ -154,9 +154,9 @@ def anal_grades(trim:int):
             else:
                 notes_dict[grade.subject.name] = [[grade.grade , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, None, None, float(grade.average.replace(",",".")), grade.subject.name, period.name]]
         elif grade.subject.name in notes_dict:
-            notes_dict[grade.subject.name] += [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, float(grade.grade.replace(",",".")) >calc_avg_subject(trim)[grade.subject.name], float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] += [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, float(grade.grade.replace(",",".")) >calc_avg_subject(trim)[0][grade.subject.name], float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
         else:
-            notes_dict[grade.subject.name] = [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, float(grade.grade.replace(",",".")) >calc_avg_subject(trim)[grade.subject.name], float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] = [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, float(grade.grade.replace(",",".")) >calc_avg_subject(trim)[0][grade.subject.name], float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
     return notes_dict
     # type : dict
 
