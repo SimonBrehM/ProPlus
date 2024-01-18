@@ -56,7 +56,8 @@ def calc_overall_avg(trim:int):
     """Calculates the overall average of the student for a certain period"""
     overall_avg = 0
     for moy in calc_avg_subject(trim).values():
-        overall_avg += moy
+        if moy not in ("Absent","NonNote","Inapte","NonRendu"):
+            overall_avg += moy
     return round(overall_avg / len(calc_avg_subject(trim)), 2)
     # type : float
 

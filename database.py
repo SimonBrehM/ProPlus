@@ -148,7 +148,7 @@ def extract_all_grades_db():
 # UPDATING FUNCTIONS
 # *********************
 
-def update_grades(trim:int):
+def update_grades_db(trim:int):
     """
     Updates the table Grades : adds only the grades that are not already in the database
     """
@@ -162,7 +162,7 @@ def update_grades(trim:int):
     db.session.commit()
     # /!\ returns None
 
-def update_subjects(trim:int):
+def update_subjects_db(trim:int):
     """
     Updates the table Subjects : adds only the subjects that are not already in the database
     """
