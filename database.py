@@ -55,7 +55,7 @@ def create_averages_db(trim:int):
     """
     Creation of an element in the table Averages coming from the period (trim)
     """
-    avg = Averages(date = str(datetime.now()), period = trimestre(trim).name, avg_overall = calc_overall_avg(trim))
+    avg = Averages(date = str(datetime.now()), period = trimestre(trim).name, avg_overall = calc_avg_overall(trim))
     db.session.add(avg)
     db.session.commit()
     # /!\ returns None
@@ -148,7 +148,7 @@ def extract_all_grades_db():
 # UPDATING FUNCTIONS
 # *********************
 
-def update_grades(trim:int):
+def update_grades_db(trim:int):
     """
     Updates the table Grades : adds only the grades that are not already in the database
     """
@@ -162,7 +162,7 @@ def update_grades(trim:int):
     db.session.commit()
     # /!\ returns None
 
-def update_subjects(trim:int):
+def update_subjects_db(trim:int):
     """
     Updates the table Subjects : adds only the subjects that are not already in the database
     """

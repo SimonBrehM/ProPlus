@@ -8,9 +8,9 @@ run_counter = 0
 def create_tables():
     if run_counter == 0:
         db.create_all() #db creation
-        create_subjects_db(1)
+        update_subjects_db(1)
+        update_grades_db(1)
         create_averages_db(1)
-        create_grades_db(1)
 
 subjects = None
 trimester = 1
@@ -35,8 +35,8 @@ def index():
         try:
             global run_counter
             get_data(input_username, input_password)
-            run_counter += 1
             create_tables()
+            run_counter += 1
             get_content()
             return render_template('content.html', inputs=inputs, periods=periods)
         except pronotepy.exceptions.ENTLoginError:
@@ -60,8 +60,8 @@ def create_and_consult_db():
 @app.route('/update_db', methods = ['POST', 'GET'])
 def update_db():
     global trimester, periods, inputs
-    update_grades(trimester)
-    update_subjects(trimester)
+    update_grades_db(trimester)
+    update_subjects_db(trimester)
     get_content()
     return render_template('content.html', inputs=inputs, periods=periods)
 
