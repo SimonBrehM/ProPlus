@@ -30,8 +30,19 @@ def get_content():
     subject_averages = extract_all_subjects_db()
     grades = extract_all_grades_db()
     averages = extract_all_averages_db()
+    inputs = None
     inputs = {"subjects":subject_averages, "grades":grades, "averages":averages}
     periods = get_periods()
+
+def get_content_period(period):
+    """
+    Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
+    """
+    global inputs, periods
+    subject_averages = extract_period_subjects_db(period)
+    grades = extract_period_grades_db(period)
+    averages = extract_period_averages_db(period)
+    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages}
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -53,15 +64,13 @@ def index():
 
 @app.route('/period_selector', methods = ['POST', 'GET'])
 def create_and_consult_db():
-    global periods, trimester
+    global periods, trimester, inputs
     if request.method == 'POST':
-        trimester = periods[request.form['period_selector']]
-        sbj = extract_all_subjects_db()
-        avg = extract_all_averages_db()
-        grd = extract_all_grades_db()
-        return render_template('blank.html', subjects = sbj, averages = avg, grades = grd)
+        trimester = request.form['period_selector']
+        get_content_period(trimester)
+        return render_template('content.html', inputs = inputs, periods=periods)
     else:
-        return render_template('blank.html')
+        return render_template('content.html', inputs = inputs, periods=periods)
 
 @app.route('/update_db', methods = ['POST', 'GET'])
 def update_db():
@@ -71,25 +80,25 @@ def update_db():
     get_content()
     return render_template('content.html', inputs=inputs, periods=periods)
 
-@app.route('/remove_db', methods = ['POST','GET'])
-def remove_db_btn():
-    if request.method == 'POST':
-        remove_db()
-        return 'db removed'
-    else:
-        return render_template('blank.html')
+# @app.route('/remove_db', methods = ['POST','GET'])
+# def remove_db_btn():
+#     if request.method == 'POST':
+#         remove_db()
+#         return 'db removed'
+#     else:
+#         return render_template('blank.html')
 
+# def predict_grade(grade:float, out_of:float, subject:int, period:int): # subject : position in a list
+#     prediction = []
+#     global inputs, periods #new
+#     sbj_avg = 0
+#     period_name = lambda periods: [i for i in periods if periods[i] == period] # new
+#     sbj_coeff = calc_avg_subject(period)[1][sbj_name(periods)[0]] # new
+#     new_sbj_avg = (sbj_avg * sbj_coeff + grade) / (sbj_coeff + out_of)
+#     all_avg = [i[1] for i in inputs["subjects"] if i[2] == trimestre(period)]
 
-def predict_grade(grade:float, out_of:float, subject:int, period:int): # subject : position in a list
-    prediction = []
-    global inputs, periods #new
-    subject_avg = inputs["subjects"][subject][1]
-    subject_name = lambda periods: [i for i in periods if periods[i] == subject] # new
-    subject_coeff = calc_avg_subject(period)[1][subject_name(periods)[0]] # new
-    
-
-    return prediction
-    # type list
+#     return prediction
+#     # type list
 
 if __name__=='__main__':
     app.run(debug=True)
