@@ -71,11 +71,21 @@ def update_db():
     get_content()
     return render_template('content.html', inputs=inputs, periods=periods)
 
+@app.route('/remove_db', methods = ['POST','GET'])
+def remove_db_btn():
+    if request.method == 'POST':
+        remove_db()
+        return 'db removed'
+    else:
+        return render_template('blank.html')
+
+
 def predict_grade(grade:float, out_of:float, subject:int, period:int): # subject : position in a list
     prediction = []
-    global inputs
+    global inputs, periods #new
     subject_avg = inputs["subjects"][subject][1]
-    subject_coeff = calc_avg_subject(period)[1][subjectname]
+    subject_name = lambda periods: [i for i in periods if periods[i] == subject] # new
+    subject_coeff = calc_avg_subject(period)[1][subject_name(periods)[0]] # new
     
 
     return prediction
