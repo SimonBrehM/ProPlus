@@ -29,7 +29,8 @@ def get_content():
     global inputs, periods
     subject_averages = extract_all_subjects_db()
     grades = extract_all_grades_db()
-    inputs = {"subjects":subject_averages, "grades":grades}
+    averages = extract_all_averages_db()
+    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages}
     periods = get_periods()
 
 @app.route('/', methods=['POST', 'GET'])
@@ -65,11 +66,30 @@ def create_and_consult_db():
 @app.route('/update_db', methods = ['POST', 'GET'])
 def update_db():
     global trimester, periods, inputs
-    update_grades(trimester)
-    update_subjects(trimester)
+    update_grades_db(trimester)
+    update_subjects_db(trimester)
     get_content()
     return render_template('content.html', inputs=inputs, periods=periods)
 
+@app.route('/remove_db', methods = ['POST','GET'])
+def remove_db_btn():
+    if request.method == 'POST':
+        remove_db()
+        return 'db removed'
+    else:
+        return render_template('blank.html')
+
+
+def predict_grade(grade:float, out_of:float, subject:int, period:int): # subject : position in a list
+    prediction = []
+    global inputs, periods #new
+    subject_avg = inputs["subjects"][subject][1]
+    subject_name = lambda periods: [i for i in periods if periods[i] == subject] # new
+    subject_coeff = calc_avg_subject(period)[1][subject_name(periods)[0]] # new
+    
+
+    return prediction
+    # type list
 
 if __name__=='__main__':
     app.run(debug=True)
