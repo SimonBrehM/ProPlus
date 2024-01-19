@@ -34,7 +34,9 @@ body {
 
 .header {
     /* background-color: #FAF9F9; */
-    border-bottom: lightgray 1px solid;
+    border-width: 5px;
+    border-style: solid;
+    border-image: linear-gradient(to bottom, lightgray, #FAF9F9) 0 2% 100% 2%;
     padding: 0.5rem;
 }
 
@@ -113,12 +115,13 @@ body {
 }
 
 .subject-container {
-    margin: 3% 5%;
+    margin: 3% 1.5%;
     padding: 2%;
     border-radius: 15px;
-    background-color: #ef6b6b;
+    background-color: e05c5c;
     display: flex;
     justify-content: space-between;
+    border: lightgray solid 1px;
 }
 
 .subject-icons img {
@@ -145,11 +148,14 @@ body {
     left: 0;
     overflow-x: hidden; 
     padding-top: 20px;
-    border-right: lightgray 1px solid;
+    border-right: lightgray solid 1px;
+    /* border-width: 5px;
+    border-style: solid;
+    border-image: linear-gradient(to right, lightgray, #FAF9F9) 2% 100% 2% 0; */
 }
 
 .grade-box {
-    margin: 3% 1% 0 36%;
+    margin: 1.5% 2% 0 36.5%;
 }
 
 .grade-header div {
@@ -160,14 +166,15 @@ body {
 .grade-header {
     padding: 4% 2%;
     border-radius: 15px 15px 0 0;
-    border: #111 solid 2px;
+    background-color: #ef6b6b;
 }
 
 .scrollable-menu {
     overflow-y: scroll;
     position: absolute;
     height: 100%;
-    border: #111 solid 2px;
+    border: lightgray solid 1px;
+    border-right: none;
 }
 
 .scroll-footer {
