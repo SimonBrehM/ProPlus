@@ -4,6 +4,7 @@ from main import *
 
 login_failed = False
 run_counter = 0
+run_counter_period = None
 
 @app.before_request
 def create_tables():
@@ -16,6 +17,12 @@ def fill_tables():
         create_averages_db(1)
         update_grades_db(1)
 
+def fill_tables_period(period:int):
+    global run_counter_period
+    if run_counter_period[period] == 0:
+        update_subjects_db(period)
+        create_averages_db(period)
+        update_grades_db(period)
 
 subjects = None
 trimester = 1
@@ -26,22 +33,23 @@ def get_content():
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
-    global inputs, periods
+    global inputs, periods, run_counter_period
     subject_averages = extract_all_subjects_db()
     grades = extract_all_grades_db()
     averages = extract_all_averages_db()
-    inputs = None
     inputs = {"subjects":subject_averages, "grades":grades, "averages":averages}
     periods = get_periods()
+    run_counter_period = {period:0 for period in periods.values()}
 
-def get_content_period(period):
+def get_content_period(period:str):
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
-    global inputs, periods
+    global inputs
     subject_averages = extract_period_subjects_db(period)
     grades = extract_period_grades_db(period)
     averages = extract_period_averages_db(period)
+    inputs = None
     inputs = {"subjects":subject_averages, "grades":grades, "averages":averages}
 
 @app.route('/', methods=['POST', 'GET'])
@@ -64,11 +72,14 @@ def index():
 
 @app.route('/period_selector', methods = ['POST', 'GET'])
 def create_and_consult_db():
-    global periods, trimester, inputs
+    global periods, inputs, run_counter_period
     if request.method == 'POST':
         trimester = request.form['period_selector']
+        period = periods[trimester]
+        fill_tables_period(period)
+        run_counter_period[period] += 1
         get_content_period(trimester)
-        return render_template('content.html', inputs = inputs, periods=periods)
+        return inputs
     else:
         return render_template('content.html', inputs = inputs, periods=periods)
 

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block body %}
+<div class="sidebar">
+
+</div>
+
+<div class="grade-box">
+    <div class="grade-header">
+        <div class="trimester-selector">
+            <form action="/period_selector" method="POST">
+                <select name="period_selector" id="period_selector" onchange="this.form.submit()">
+                    {% for period in periods %}
+                    <option value="{{ period }}">{{ period }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        <div class="update-button">
+            <form action="/update_db" method="post">
+                <input type="submit" value="Update the database">
+            </form>
+        </div>
+        <!--Refresh icon-->
+    </div>
+    <div class="scrollable-menu">
+        {% for subject in inputs.subjects %}
+        <div class="subject-container">
+            <div class="subject-icons">
+                <!--drop down icon-->
+                <img src="static/img/logo.png" alt="fill-in" id="grade-icon">
+            </div>
+            <div class="subject-description">
+                <h2>{{ subject[0] }}</h2>
+                <!-- progress bar -->
+            </div>
+            <div class="subject-average"><h2>{{ subject[1] }}</h2></div>
+        </div>
+        <!--
+        <div class="grades-container">
+            {% for grade in inputs.grades[subject] %}
+            <div class="grade-container">
+                <div class="grade-contribution"></div>
+                <div class="grade-value"><h2>{{ grade[0]}}/{{ grade[1] }}</h2></div>
+                <div class="grade-description"><h2>{{ grade[2] }}</h2></div>
+            </div>
+            <div class="grade-coef"><h2>{{ grade[3] }}</h2></div>
+            {% endfor %}
+        </div>
+        -->
+        {% endfor %}
+        <div class="scroll-footer"></div>
+    </div>
+</div>
+{% endblock %}

@@ -117,27 +117,27 @@ def extract_all_grades_db():
     return grd_list
     # type : list
 
-def extract_period_averages_db(period):
+def extract_period_averages_db(periode):
     """Extracts elements from the table Averages depending on the period and returns it on the form of a list"""
-    all_avg = Averages.query.filter_by(period=period).all()
+    all_avg = Averages.query.filter_by(period=periode).all()
     avg_list = []
     for avg in all_avg:
         avg_list.append([avg.date, avg.period, avg.avg_overall])
     return avg_list
     # type : list
 
-def extract_period_subjects_db(period):
+def extract_period_subjects_db(periode):
     """Extracts elements from the table Subjects depending on the period and returns it on the form of a list"""
-    all_sbj = Subjects.query.filter_by(period=period).all()
+    all_sbj = Subjects.query.filter_by(period=periode).all()
     sbj_list = []
     for sbj in all_sbj:
         sbj_list.append([sbj.name, sbj.avg, sbj.period])
     return sbj_list
     # type : list
 
-def extract_period_grades_db(period):
+def extract_period_grades_db(periode):
     """Extracts elements from the table Grades depending on the period and returns it on the form of a list"""
-    all_grd = Grades.query.filter_by(period=period).all()
+    all_grd = Grades.query.filter_by(period=periode).all()
     grd_list = []
     for grd in all_grd:
         grd_list.append([grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period])
@@ -158,7 +158,7 @@ def update_grades_db(trim:int):
     existing_grades = Grades.query.all()
     new_grades = anal_grades(trim)
     existing_grade_specs = set((grade.description,grade.subject,grade.period) for grade in existing_grades)
-    grades_to_add = [value for grade in new_grades for value in new_grades[grade] if (value[3],grade,value[7]) not in existing_grade_specs]
+    grades_to_add = [value for grade in new_grades for value in new_grades[grade] if (value[3],grade,value[8]) not in existing_grade_specs]
     for grd in grades_to_add:
         new_grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = grd[7], period = grd[8])
         db.session.add(new_grade)
@@ -173,7 +173,7 @@ def update_subjects_db(trim:int):
     existing_subjects_names = set((subject.name, subject.period) for subject in existing_subjects)
     new_subjects = get_subjects(trim)
     subjects_avg = calc_avg_subject(trim)[0]
-    subjects_to_add = [subject for subject in new_subjects if subject not in existing_subjects_names]
+    subjects_to_add = [subject for subject in new_subjects if (subject, trimestre(trim).name) not in existing_subjects_names]
     for sbj in subjects_to_add:
         new_subject = Subjects(name = sbj, avg = subjects_avg[sbj], period = trimestre(trim).name)
         db.session.add(new_subject)
