@@ -37,8 +37,8 @@ def get_content():
     subject_averages = extract_all_subjects_db()
     grades = extract_all_grades_db()
     averages = extract_all_averages_db()
-    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages}
     periods = get_periods()
+    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages, "periods":periods, "current_period":client.current_period.name}
     run_counter_period = {period:0 for period in periods.values()}
 
 def get_content_period(period:str):
@@ -79,7 +79,7 @@ def create_and_consult_db():
         fill_tables_period(period)
         run_counter_period[period] += 1
         get_content_period(trimester)
-        return inputs
+        return render_template('content.html', inputs = inputs, periods=periods)
     else:
         return render_template('content.html', inputs = inputs, periods=periods)
 
