@@ -2,10 +2,18 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from main import *
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
+
+def remove_db(): # full new function
+    try:
+        cwd = os.getcwd()
+        os.remove(os.path.join(cwd,"instance/database.db"))
+    except FileNotFoundError as ex:
+        return ex
 
 # *********************
 # TABLES OF THE DATABASE
