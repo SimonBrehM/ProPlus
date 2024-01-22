@@ -36,17 +36,17 @@ def calc_avg_subject(trim:int):
     averages = {}
     # averages = {subject : grade out of 20}
     for grade in trim.grades:
-        if grade.grade in ("Absent","NonNote","Inapte","NonRendu"):
+        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             if grade.subject.name not in averages:
                 averages[grade.subject.name] = grade.grade
-        elif grade.subject.name in averages and averages[grade.subject.name] not in ("Absent","NonNote","Inapte","NonRendu"):
+        elif grade.subject.name in averages and averages[grade.subject.name] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             averages[grade.subject.name] += (float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient)
             coefficients[grade.subject.name] += float(grade.coefficient)
         else:
             averages[grade.subject.name] = (float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient)
             coefficients[grade.subject.name] = float(grade.coefficient)
     for key in averages:
-        if averages[key] not in ("Absent","NonNote","Inapte","NonRendu"):
+        if averages[key] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             averages[key] = round(averages[key] / coefficients[key],2)
     return averages
     # type : dict
@@ -56,7 +56,7 @@ def calc_overall_avg(trim:int):
     """Calculates the overall average of the student for a certain period"""
     overall_avg = 0
     for moy in calc_avg_subject(trim).values():
-        if moy not in ("Absent","NonNote","Inapte","NonRendu"):
+        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             overall_avg += moy
     return round(overall_avg / len(calc_avg_subject(trim)), 2)
     # type : float
@@ -76,7 +76,7 @@ def anal_grades(trim:int):
     notes_dict = {} ; period = trimestre(trim)
     # notes_dict = {subject : [actual grade : float, grade.out_of : float, grade.coefficient : float, grade description : str, is grade good for subject average : bool, is grade over class average : bool, class average : float, subject name : str, period name : str]}
     for grade in period.grades:
-        if grade.grade in ("Absent","NonNote","Inapte","NonRendu"):
+        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             if grade.subject.name in notes_dict:
                 notes_dict[grade.subject.name] += [[grade.grade , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, None, None, float(grade.average.replace(",",".")), grade.subject.name, period.name]]
             else:

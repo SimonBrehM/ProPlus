@@ -65,8 +65,8 @@ def create_and_consult_db():
 @app.route('/update_db', methods = ['POST', 'GET'])
 def update_db():
     global trimester, periods, inputs
-    update_grades(trimester)
-    update_subjects(trimester)
+    update_grades_db(trimester)
+    update_subjects_db(trimester)
     get_content()
     return render_template('content.html', inputs=inputs, periods=periods)
 
