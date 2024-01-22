@@ -2,18 +2,18 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from main import *
-import os
+# import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
-def remove_db(): # full new function
-    try:
-        cwd = os.getcwd()
-        os.remove(os.path.join(cwd,"instance/database.db"))
-    except FileNotFoundError as ex:
-        return ex
+# def remove_db():
+#     try:
+#         cwd = os.getcwd()
+#         os.remove(os.path.join(cwd,"instance/database.db"))
+#     except FileNotFoundError as ex:
+#         return ex
 
 # *********************
 # TABLES OF THE DATABASE
@@ -27,6 +27,7 @@ class Averages(db.Model):
 class Subjects(db.Model):
     name = db.Column(db.String, primary_key = True)
     avg = db.Column(db.String)
+    period = db.Column(db.String, primary_key = True)
 
 class Grades(db.Model):
     id = db.Column(db.Integer, primary_key = True)
@@ -53,8 +54,9 @@ def create_subjects_db(trim:int):
     CAUTION : it does NOT take into account previous subjects added into the db, use it for the launch of the db or an error will appear relative to the primary key
     """
     subjects_avg = calc_avg_subject(trim)[0]
+    period = trimestre(trim).name
     for subject in subjects_avg.keys():
-        sbj = Subjects(name = subject, avg = subjects_avg[subject])
+        sbj = Subjects(name = subject, avg = subjects_avg[subject], period = period)
         db.session.add(sbj)
     db.session.commit()
     # /!\ returns None
@@ -85,40 +87,6 @@ def create_grades_db(trim:int):
 # *********************
 
 # *********************
-# COMMIT / ADD ONE ELEMENT FUNCTIONS
-# *********************
-
-def commit_averages_db(avg_period:str, avg_avg_overall:float):
-    """
-    Commits one element to the table Averages coming from its period and the overall average
-    """
-    avg = Averages(date = str(datetime.now()), period = avg_period, avg_overall = avg_avg_overall)
-    db.session.add(avg)
-    db.session.commit()
-    # /!\ returns None
-
-def commit_subjects_db(sbj_name:str, sbj_avg:float):
-    """
-    Commits one element to the table Subjects coming from its name (/!\ primary key) and the average in this subject
-    """
-    subject = Subjects(name = sbj_name, avg = sbj_avg)
-    db.session.add(subject)
-    db.session.commit()
-    # /!\ returns None
-
-def commit_grades_db(grd_actual_grade:float, grd_out_of:float, grd_coeff:float, grd_desc:str, grd_benef:bool, grd_above_class:bool, grd_class_avg:float, grd_sbj:str, grd_period:str):
-    """
-    Commits one element to the table Grades coming from the actual grade, the out_of, the coefficient, the description, if its benefical for the subjects average, if its above the class average, the class average, the subject and its period
-    """
-    grade = Grades(actual_grade = grd_actual_grade, out_of = grd_out_of, coeff = grd_coeff, description = grd_desc, benefical = grd_benef, above_class_avg = grd_above_class, avg_class = grd_class_avg, subject = grd_sbj, period = grd_period)
-    db.session.add(grade)
-    db.session.commit()
-    # /!\ returns None
-
-# *********************
-# *********************
-
-# *********************
 # EXTRACTION FUNCTIONS
 # *********************
 
@@ -136,13 +104,40 @@ def extract_all_subjects_db():
     all_sbj = Subjects.query.all()
     sbj_list = []
     for sbj in all_sbj:
-        sbj_list.append([sbj.name, sbj.avg])
+        sbj_list.append([sbj.name, sbj.avg, sbj.period])
     return sbj_list
     # type : list
 
 def extract_all_grades_db():
     """Extracts EVERY element from the table Grades and returns it on the form of a list"""
     all_grd = Grades.query.all()
+    grd_list = []
+    for grd in all_grd:
+        grd_list.append([grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period])
+    return grd_list
+    # type : list
+
+def extract_period_averages_db(periode):
+    """Extracts elements from the table Averages depending on the period and returns it on the form of a list"""
+    all_avg = Averages.query.filter_by(period=periode).all()
+    avg_list = []
+    for avg in all_avg:
+        avg_list.append([avg.date, avg.period, avg.avg_overall])
+    return avg_list
+    # type : list
+
+def extract_period_subjects_db(periode):
+    """Extracts elements from the table Subjects depending on the period and returns it on the form of a list"""
+    all_sbj = Subjects.query.filter_by(period=periode).all()
+    sbj_list = []
+    for sbj in all_sbj:
+        sbj_list.append([sbj.name, sbj.avg, sbj.period])
+    return sbj_list
+    # type : list
+
+def extract_period_grades_db(periode):
+    """Extracts elements from the table Grades depending on the period and returns it on the form of a list"""
+    all_grd = Grades.query.filter_by(period=periode).all()
     grd_list = []
     for grd in all_grd:
         grd_list.append([grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period])
@@ -163,7 +158,7 @@ def update_grades_db(trim:int):
     existing_grades = Grades.query.all()
     new_grades = anal_grades(trim)
     existing_grade_specs = set((grade.description,grade.subject,grade.period) for grade in existing_grades)
-    grades_to_add = [value for grade in new_grades for value in new_grades[grade] if (value[3],grade,value[7]) not in existing_grade_specs]
+    grades_to_add = [value for grade in new_grades for value in new_grades[grade] if (value[3],grade,value[8]) not in existing_grade_specs]
     for grd in grades_to_add:
         new_grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = grd[7], period = grd[8])
         db.session.add(new_grade)
@@ -175,12 +170,12 @@ def update_subjects_db(trim:int):
     Updates the table Subjects : adds only the subjects that are not already in the database
     """
     existing_subjects = Subjects.query.all()
-    existing_subjects_names = set(subject.name for subject in existing_subjects)
+    existing_subjects_names = set((subject.name, subject.period) for subject in existing_subjects)
     new_subjects = get_subjects(trim)
     subjects_avg = calc_avg_subject(trim)[0]
-    subjects_to_add = [subject for subject in new_subjects if subject not in existing_subjects_names]
+    subjects_to_add = [subject for subject in new_subjects if (subject, trimestre(trim).name) not in existing_subjects_names]
     for sbj in subjects_to_add:
-        new_subject = Subjects(name = sbj, avg = subjects_avg[sbj])
+        new_subject = Subjects(name = sbj, avg = subjects_avg[sbj], period = trimestre(trim).name)
         db.session.add(new_subject)
     db.session.commit()
     # /!\ returns None
