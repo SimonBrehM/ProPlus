@@ -135,15 +135,20 @@ def extract_all_subjects_db():
 def extract_all_grades_db():
     """Extracts EVERY element from the table Grades and returns it on the form of a list"""
     all_grd = Grades.query.all()
-    grd_list = []
+    grd_list = {}
     for grd in all_grd:
-        grd_list.append([grd.id, grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period])
+        if grd.subject in grd_list:
+            grd_list[grd.subject] += [[grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period]]
+        else:
+            grd_list[grd.subject] = [[grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period]]
     return grd_list
-    # type : list
+    # type : dict
 
 # *********************
 # *********************
-
+"""
+{"grades" : grades {subject: [[actual grade : float, grade.out_of : float, grade.coefficient : float, grade description : str, is grade good for subject average : bool, is grade over class average : bool, class average : float, subject name : str, period name : str]]} }
+"""
 # *********************
 # UPDATING FUNCTIONS
 # *********************

@@ -44,7 +44,7 @@ def index():
             run_counter += 1
             get_content()
             return render_template('content.html', inputs=inputs, periods=periods)
-        except pronotepy.exceptions.ENTLoginError:
+        except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
             return render_template('login.html', login_failed=login_failed)
     else:
