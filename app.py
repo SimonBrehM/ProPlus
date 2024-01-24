@@ -57,6 +57,7 @@ def index():
     if request.method == "POST":
         input_username = request.form['username']
         input_password = request.form['password']
+        push_username(input_username)
         try:
             global run_counter
             get_data(input_username, input_password)
