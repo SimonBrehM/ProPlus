@@ -182,3 +182,8 @@ body {
     position: relative;
     height: 8%;
 }
+
+.grade-container div,  .grade-container div div {
+    display: inline-block;
+    position: relative;
+}
