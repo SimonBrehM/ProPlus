@@ -115,7 +115,7 @@ body {
 }
 
 .subject-container {
-    margin: 3% 1.5%;
+    margin: 3% 1.5% 0.5% 1.5%;
     padding: 2%;
     border-radius: 15px;
     background-color: e05c5c;
@@ -184,6 +184,33 @@ body {
 }
 
 .grade-container div,  .grade-container div div {
-    display: inline-block;
+    display: inline-block; 
     position: relative;
+}
+
+.grade-content {
+    margin: 0.5% 5% 0.5% 5%;
+    border-left: rgb(171, 255, 171) solid 15px;
+    border-radius: 10px;
+    padding: 0.5% 1%;
+    width: 70%;
+    background-color: rgb(224, 224, 224)
+}
+
+.grade-coef {
+    border-radius: 50%;
+    padding: 10px;
+    width: 5%;
+    background-color: rgb(255, 230, 0);
+    text-align: center;
+    margin: -3%;
+}
+
+.grade-coef h2 {
+    margin: 5px;
+    font-size: 110%;
+}
+
+.grade-value {
+    margin-right: 5%;
 }
