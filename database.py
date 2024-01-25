@@ -138,9 +138,9 @@ def extract_all_grades_db():
     grd_list = {}
     for grd in all_grd:
         if grd.subject in grd_list:
-            grd_list[grd.subject] += [[grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period]]
+            grd_list[grd.subject] += [[grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period, grd.id]]
         else:
-            grd_list[grd.subject] = [[grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period]]
+            grd_list[grd.subject] = [[grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period, grd.id]]
     return grd_list
     # type : dict
 
