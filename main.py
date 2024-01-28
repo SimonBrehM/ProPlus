@@ -23,6 +23,9 @@ def get_data(username, password):
     if not client.logged_in:
         exit(1)  # the client has failed to log in
 
+def get_current_period():
+    return client.current_period
+
 def trimestre(n:int):
     """Function that returns the period we want, coming from a number"""
     return client.periods[n-1]
@@ -40,6 +43,7 @@ def calc_avg_subject(trim:int):
     coefficients = {}
     averages = {}
     # averages = {subject : grade out of 20}
+    # coefficients = {subject : sum of coefficients}
     for grade in trim.grades:
         if grade.grade in ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero"):
             if grade.subject.name not in averages:
@@ -88,48 +92,47 @@ def anal_subjects(sbj_list:list):
         "ITALIEN LV3" : "",
         "ESPAGNOL LV3" : "",
         "ARABE LV3" : "",
-        "21" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
-        "" : "",
+        "FRANCAIS" : "",
+        "ENSEIGN SCIENTIFIQUE SPC" : "",
+        "ENSEIGN.SCIENTIFIQUE SVT" : "",
+        "ALLEMAND LV2" : "",
+        "LL ABIBAC" : "",
+        "ANGLAIS LV1" : "",
+        "DNL ANGLAIS SVT" : "",
+        "HG BFI ARABOPHONE" : "",
+        "HIST.GEO AMERICAINE" : "",
+        "HLPHI O" : "",
+        "ANGLAIS LV2" : "",
+        "ACCOMPAGNEMENT. PERSO" : "",
+        "DNL ALL" : "",
+        "HG ESP" : "",
+        "DNL ANGLAIS" : "",
+        "MATHS" : "",
+        "ED.PHYSIQUE & SPORT." : "",
+        "HG PORT." : "",
+        "Soutien LLCE" : "",
+        "ACCOMPAGNEMT. PERSO" : "",
+        "MATHS CHINOIS" : "",
+        "CHINOIS LV3" : "",
+        "FRANCAIS LANGUE SECONDE" : "",
+        "DRAMA" : "",
+        "LL PORTUGAISE" : "",
+        "LL ESPAGNOLE" : "",
+        "LL JAPONAISE" : "",
+        "LL AROBOPHONE" : "",
+        "LL ANGLOPHONE" : "",
+        "HG SEC. ANGLOPHONE" : "",
+        "ACCO PERSO FRANC" : "",
+        "HG JAPO" : "",
+        "ACCO PERSO MATH" : "",
+        "SC.NUMERIQUE.TECHNOL." : "",
+        "DS commun Maths" : "",
+        "LL CHINOIS" : "",
+        "HG ARABOPHONE" : "",
+        "LL ITALIENNE" : "",
+        "HG ITALIENNE" : "",
+        "LITTERAT. LCA LATIN" : "",
+        "LCA LATIN" : "",
     }
     
     return sbj_list

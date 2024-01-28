@@ -16,7 +16,7 @@
                 <select name="period_selector" id="period_selector" onchange="this.form.submit()">
                     {% for period in inputs.periods %}
                     select = period
-                    {% if period = inputs.current_period %}
+                    {% if period == inputs.current_period[0] %}
                     <option value="{{ period }}" selected = "selected">{{ period }}</option>
                     {% else %}
                     <option value="{{ period }}">{{ period }}</option>
@@ -37,6 +37,11 @@
         </div>
         <!--Refresh icon-->
     </div>
+    {% if bad_period %}
+    <div class="bad-period">
+        <p>Bad period</p>
+    </div>
+    {% endif %}
     <div class="scrollable-menu">
         {% for subject in inputs.subjects %}
         <div class="subject-container">
