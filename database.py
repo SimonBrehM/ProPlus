@@ -40,7 +40,7 @@ class Grades(db.Model):
     out_of = db.Column(db.Float)
     coeff = db.Column(db.Float)
     description = db.Column(db.String)
-    benefical = db.Column(db.Boolean) # grade > subject_avg
+    benefical = db.Column(db.String) # grade > subject_avg
     above_class_avg = db.Column(db.Boolean) # grade > class_avg
     avg_class = db.Column(db.String)
     subject = db.Column(db.String)

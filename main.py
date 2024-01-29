@@ -72,34 +72,34 @@ def calc_avg_overall(trim:int):
 
 def anal_subjects(sbj_list:list):
     sbj_dico = {
-        "ABIBAC HG" : "",
-        "ACL" : "",
-        "HG BFI ITALOPHONE" : "",
-        "HG POLO" : "",
-        "HG BRITANNIQUE" : "",
-        "CDM" : "",
-        "HIST.GEO.EDUC.CIVIQ." : "",
-        "ANGLAIS EURO" : "",
-        "ALLEMAND EURO" : "",
-        "LITT. ANGLAIS" : "",
-        "MATHEMATIQUES" : "",
-        "SCIENCES VIE & TERRE" : "",
-        "SC. ECONO.& SOCIALES" : "",
-        "HIST.GEO.GEOPOL.S.P." : "",
-        "NUMERIQUE SC. INFORM." : "",
-        "PHYSIQUE-CHIMIE" : "",
-        "EDUCATION MUSICALE" : "",
-        "ITALIEN LV3" : "",
-        "ESPAGNOL LV3" : "",
-        "ARABE LV3" : "",
-        "FRANCAIS" : "",
-        "ENSEIGN SCIENTIFIQUE SPC" : "",
-        "ENSEIGN.SCIENTIFIQUE SVT" : "",
-        "ALLEMAND LV2" : "",
-        "LL ABIBAC" : "",
-        "ANGLAIS LV1" : "",
-        "DNL ANGLAIS SVT" : "",
-        "HG BFI ARABOPHONE" : "",
+        "ABIBAC HG" : "ABIBAC HG",
+        "ACL" : "ACL",
+        "HG BFI ITALOPHONE" : "HG ITALIEN",
+        "HG POLO" : "HG POLONAIS",
+        "HG BRITANNIQUE" : "HG BRITISH",
+        "CDM" : "CDM",
+        "HIST.GEO.EDUC.CIVIQ." : "HISTOIRE-GEO",
+        "ANGLAIS EURO" : "ANGLAIS EURO",
+        "ALLEMAND EURO" : "ALLEMAND EURO",
+        "LITT. ANGLAIS" : "ANGLAIS",
+        "MATHEMATIQUES" : "MATHS",
+        "SCIENCES VIE & TERRE" : "SVT",
+        "SC. ECONO.& SOCIALES" : "SES",
+        "HIST.GEO.GEOPOL.S.P." : "HGGSP",
+        "NUMERIQUE SC. INFORM." : "NSI",
+        "PHYSIQUE-CHIMIE" : "PHYSIQUE-CHIMIE",
+        "EDUCATION MUSICALE" : "MUSIQUE",
+        "ITALIEN LV3" : "ITALIEN LV3",
+        "ESPAGNOL LV3" : "ESPAGNOL LV3",
+        "ARABE LV3" : "ARABE LV3",
+        "FRANCAIS" : "FRANCAIS",
+        "ENSEIGN SCIENTIFIQUE SPC" : "ES PC",
+        "ENSEIGN.SCIENTIFIQUE SVT" : "ES SVT",
+        "ALLEMAND LV2" : "ALLEMAND LV2",
+        "LL ABIBAC" : "LL ABIBAC",
+        "ANGLAIS LV1" : "ANGLAIS LV1",
+        "DNL ANGLAIS SVT" : "DNL SVT",
+        "HG BFI ARABOPHONE" : "HG ARABE",
         "HIST.GEO AMERICAINE" : "",
         "HLPHI O" : "",
         "ANGLAIS LV2" : "",
@@ -157,9 +157,9 @@ def anal_grades(trim:int):
             else:
                 notes_dict[grade.subject.name] = [[grade.grade , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, None, None, float(grade.average.replace(",",".")), grade.subject.name, period.name]]
         elif grade.subject.name in notes_dict:
-            notes_dict[grade.subject.name] += [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, float(grade.grade.replace(",",".")) >calc_avg_subject(trim)[0][grade.subject.name], float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] += [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, 'class="contributes"' if float(grade.grade.replace(",",".")) > calc_avg_subject(trim)[0][grade.subject.name] else 'class="not_contributes"', float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
         else:
-            notes_dict[grade.subject.name] = [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, float(grade.grade.replace(",",".")) >calc_avg_subject(trim)[0][grade.subject.name], float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] = [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, 'class="contributes"' if float(grade.grade.replace(",",".")) > calc_avg_subject(trim)[0][grade.subject.name] else 'class="not_contributes"', float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
     return notes_dict
     # type : dict
 
