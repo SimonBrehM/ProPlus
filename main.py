@@ -27,17 +27,23 @@ def get_current_period():
     return client.current_period.name
 
 def trimestre(n:int):
-    """Function that returns the period we want, coming from a number"""
+    """
+    Function that returns the period we want, coming from a number
+    """
     return client.periods[n-1]
     # type : object
 
 def note_20(grade : object):
-    """Returns the grade out of 20"""
+    """
+    Returns the grade out of 20
+    """
     return ((float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient))
     # type : float
 
 def calc_avg_subject(trim:int):
-    """Calculates the average of the student on every subject for an certain period"""
+    """
+    Calculates the average of the student on every subject for an certain period
+    """
     trim = trimestre(trim)
     bonus = {}
     coefficients = {}
@@ -61,7 +67,9 @@ def calc_avg_subject(trim:int):
     # type : dict
 
 def calc_avg_overall(trim:int):
-    """Calculates the overall average of the student for a certain period"""
+    """
+    Calculates the overall average of the student for a certain period
+    """
     overall_avg = 0
     for moy in calc_avg_subject(trim)[0].values():
         if moy not in ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero"):
@@ -138,7 +146,9 @@ def anal_subjects(sbj_list:list):
     return sbj_list
 
 def get_subjects(trim:int):
-    """Returns all the subjects in a list"""
+    """
+    Returns all the subjects in a list
+    """
     subjects = []
     for x in trimestre(trim).grades:
         if x.subject.name not in subjects:    
@@ -147,7 +157,9 @@ def get_subjects(trim:int):
     # type : list
 
 def anal_grades(trim:int):
-    """Returns a dictionnary of a bunch a specificities on every grade for every subject"""
+    """
+    Returns a dictionnary of a bunch a specificities on every grade for every subject
+    """
     notes_dict = {} ; period = trimestre(trim)
     # notes_dict = {subject : [actual grade : float, grade.out_of : float, grade.coefficient : float, grade description : str, is grade good for subject average : bool, is grade over class average : bool, class average : float, subject name : str, period name : str]}
     for grade in period.grades:
@@ -164,7 +176,9 @@ def anal_grades(trim:int):
     # type : dict
 
 def convert_to_100(grade:float, out_of:float):
-    """"Returns the parameter (a grade) into a grade out of 100"""
+    """"
+    Returns the parameter (a grade) into a grade out of 100
+    """
     return round(grade / out_of * 100,2)
     # type : float
 

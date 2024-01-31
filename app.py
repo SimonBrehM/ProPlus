@@ -17,8 +17,6 @@ def fill_tables_period(period:int): # time loss
         create_averages_db(period)
         update_grades_db(period)
 
-subjects = None
-trimester = 1
 inputs = None
 periods = None
 bad_period = False
