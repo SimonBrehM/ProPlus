@@ -24,7 +24,7 @@ def get_data(username, password):
         exit(1)  # the client has failed to log in
 
 def get_current_period():
-    return client.current_period
+    return client.current_period.name
 
 def trimestre(n:int):
     """Function that returns the period we want, coming from a number"""

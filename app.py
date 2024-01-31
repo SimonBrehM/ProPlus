@@ -30,17 +30,6 @@ inputs = None
 periods = None
 bad_period = False
 
-def get_content():
-    """
-    Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
-    """
-    global inputs, periods, run_counter_period
-    subject_averages = extract_all_subjects_db()
-    grades = extract_all_grades_db()
-    averages = extract_all_averages_db()
-    periods = get_periods()
-    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages, "periods":periods, "current_period":get_current_period()}
-    run_counter_period = {period:0 for period in periods.values()}
 
 def get_content_period(period:str):
     """
@@ -59,13 +48,16 @@ def index():
         input_username = request.form['username']
         input_password = request.form['password']
         try:
-            global run_counter
+            global periods, run_counter_period
             get_data(input_username, input_password)
             push_username(input_username)
-            fill_tables()
-            run_counter += 1
-            get_content()
-            return render_template('content.html', inputs=inputs)
+            periods = get_periods()
+            period = periods[get_current_period()]
+            run_counter_period = {period:0 for period in periods.values()}
+            fill_tables_period(period)
+            run_counter_period[period] += 1
+            get_content_period(get_current_period())
+            return render_template('content.html', inputs=inputs, bad_period=bad_period)
         except pronotepy.exceptions.ENTLoginError:
             login_failed = True
             return render_template('login.html', login_failed=login_failed)
@@ -78,11 +70,12 @@ def create_and_consult_db():
     if request.method == 'POST':
         try:
             trimester = request.form['period_selector']
+            bad_period = False
             period = periods[trimester]
             fill_tables_period(period)
             run_counter_period[period] += 1
             get_content_period(trimester)
-            return render_template('content.html', inputs = inputs)
+            return render_template('content.html', inputs = inputs, bad_period=bad_period)
         except ZeroDivisionError:
             bad_period = True
             return render_template('content.html', inputs = inputs, bad_period=bad_period)
@@ -93,7 +86,7 @@ def update_db():
     update_grades_db(trimester)
     update_subjects_db(trimester)
     get_content()
-    return render_template('content.html', inputs=inputs)
+    return render_template('content.html', inputs=inputs, bad_period=bad_period)
 
 # @app.route('/remove_db', methods = ['POST','GET'])
 # def remove_db_btn():
