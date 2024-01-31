@@ -10,14 +10,7 @@ run_counter_period = None
 def create_tables():
     db.create_all() #db creation
 
-def fill_tables():
-    global run_counter
-    if run_counter == 0:
-        update_subjects_db(1)
-        create_averages_db(1)
-        update_grades_db(1)
-
-def fill_tables_period(period:int):
+def fill_tables_period(period:int): # time loss
     global run_counter_period
     if run_counter_period[period] == 0:
         update_subjects_db(period)
@@ -31,7 +24,7 @@ periods = None
 bad_period = False
 
 
-def get_content_period(period:str):
+def get_content_period(period:str): # time loss
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
@@ -50,7 +43,7 @@ def index():
         try:
             global periods, run_counter_period
             get_data(input_username, input_password)
-            push_username(input_username)
+            # push_username(input_username)
             periods = get_periods()
             period = periods[get_current_period()]
             run_counter_period = {period:0 for period in periods.values()}
@@ -75,26 +68,22 @@ def create_and_consult_db():
             fill_tables_period(period)
             run_counter_period[period] += 1
             get_content_period(trimester)
+            inputs["current_period"] = trimester
             return render_template('content.html', inputs = inputs, bad_period=bad_period)
         except ZeroDivisionError:
             bad_period = True
+            inputs["current_period"] = trimester
             return render_template('content.html', inputs = inputs, bad_period=bad_period)
 
 @app.route('/update_db', methods = ['POST', 'GET'])
 def update_db():
-    global trimester, periods, inputs
-    update_grades_db(trimester)
-    update_subjects_db(trimester)
-    get_content()
+    global periods, inputs
+    trimester = inputs["current_period"]
+    update_grades_db(periods[trimester])
+    update_subjects_db(periods[trimester])
+    get_content_period(trimester)
     return render_template('content.html', inputs=inputs, bad_period=bad_period)
 
-# @app.route('/remove_db', methods = ['POST','GET'])
-# def remove_db_btn():
-#     if request.method == 'POST':
-#         remove_db()
-#         return 'db removed'
-#     else:
-#         return render_template('blank.html')
 
 def predict_grade(grade:float, out_of:float, subject:str, period:str):
     # subject : result from a selector ?, period : auto selected with the /period_selector

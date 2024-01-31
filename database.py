@@ -12,12 +12,6 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///database.db'
 db = SQLAlchemy(app)
 
-# def remove_db():
-#     try:
-#         cwd = os.getcwd()
-#         os.remove(os.path.join(cwd,"instance/database.db"))
-#     except FileNotFoundError as ex:
-#         return ex
 
 
 # *********************
