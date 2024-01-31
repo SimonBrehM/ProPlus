@@ -44,7 +44,7 @@
         <div class="grades-container">
             {% for grade in inputs.grades[subject[0]] %}
             <div class="grade-container">
-                <div class="grade-content" {{ grade[8] }}>
+                <div class="grade-content " style="border-left: {{ grade[4] }} solid 4px;">
                     <div class="grade-value"><h2>{{ grade[0] }} / {{ grade[1] }}</h2></div>
                     <div class="grade-description"><h2>{{ grade[3] }}</h2></div>
                 </div>
@@ -57,3 +57,5 @@
     </div>
 </div>
 {% endblock %}
+
+'class="not_contributes"'

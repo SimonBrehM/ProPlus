@@ -219,3 +219,11 @@ body {
 .grade-value {
     margin-right: 5%;
 }
+
+.True {
+    border-left: green 4px solid;
+}
+
+.False {
+    border-left: red 4px solid;
+}
