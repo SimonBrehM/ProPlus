@@ -27,6 +27,7 @@ class Subjects(db.Model):
     name = db.Column(db.String, primary_key = True)
     avg = db.Column(db.String)
     period = db.Column(db.String, primary_key = True)
+    coefficients = db.Column(db.Float)
 
 class Grades(db.Model):
     id = db.Column(db.Integer, primary_key = True)
