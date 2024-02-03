@@ -3,7 +3,6 @@ from database import *
 from main import *
 
 login_failed = False
-run_counter = 0
 run_counter_period = None
 
 @app.before_request
@@ -18,20 +17,19 @@ def fill_tables_period(period:int): # time loss
         update_grades_db(period)
 
 inputs = None
-periods = None
-bad_period = False
+empty_trimester = False
 
 
 def get_content_period(period:str): # time loss
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
-    global inputs, periods, run_counter_period
+    global inputs
     subject_averages = extract_period_subjects_db(period)
     grades = extract_period_grades_db(period)
     averages = extract_period_averages_db(period)
     inputs = None
-    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages, "periods":periods, "current_period":get_current_period()}
+    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages, "periods":get_periods(), "current_period":get_current_period()}
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
@@ -39,7 +37,7 @@ def index():
         input_username = request.form['username']
         input_password = request.form['password']
         try:
-            global periods, run_counter_period
+            global run_counter_period
             get_data(input_username, input_password)
             periods = get_periods()
             period = periods[get_current_period()]
@@ -47,7 +45,7 @@ def index():
             fill_tables_period(period)
             run_counter_period[period] += 1
             get_content_period(get_current_period())
-            return render_template('content.html', inputs=inputs, bad_period=bad_period)
+            return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
             return render_template('login.html', login_failed=login_failed)
@@ -56,30 +54,30 @@ def index():
 
 @app.route('/period_selector', methods = ['POST', 'GET'])
 def create_and_consult_db():
-    global periods, inputs, run_counter_period, bad_period
+    global inputs, run_counter_period, empty_trimester
     if request.method == 'POST':
         try:
             trimester = request.form['period_selector']
-            bad_period = False
-            period = periods[trimester]
+            empty_trimester = False
+            period = inputs["periods"][trimester]
             fill_tables_period(period)
             run_counter_period[period] += 1
             get_content_period(trimester)
             inputs["current_period"] = trimester
-            return render_template('content.html', inputs = inputs, bad_period=bad_period)
+            return render_template('content.html', inputs = inputs, empty_trimester=empty_trimester)
         except ZeroDivisionError:
-            bad_period = True
+            empty_trimester = True
             inputs["current_period"] = trimester
-            return render_template('content.html', inputs = inputs, bad_period=bad_period)
+            return render_template('content.html', inputs = inputs, empty_trimester=empty_trimester)
 
 @app.route('/update_db', methods = ['POST', 'GET'])
 def update_db():
-    global periods, inputs
+    global inputs
     trimester = inputs["current_period"]
-    update_grades_db(periods[trimester])
-    update_subjects_db(periods[trimester])
+    update_grades_db(inputs["periods"][trimester])
+    update_subjects_db(inputs["periods"][trimester])
     get_content_period(trimester)
-    return render_template('content.html', inputs=inputs, bad_period=bad_period)
+    return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
 
 
 def predict_grade(grade:float, out_of:float, subject:str):
@@ -90,7 +88,7 @@ def predict_grade(grade:float, out_of:float, subject:str):
     global inputs
     period = inputs["current_period"]
     subject_avg = [average[1] for average in inputs["subjects"] if average[0] == subject and average[2] == period]
-    period_nb = periods[period] # int
+    period_nb = inputs["periods"][period] # int
     subject_coeff = calc_avg_subject(period_nb)[1][subject] # float | modify creation and extraction functions so it's added to the db and in inputs ?
     new_subject_avg = (subject_avg[0] * subject_coeff + grade) / (subject_coeff + out_of)
     all_avg = [i[1] for i in inputs["subjects"] if i[2] == period and i[0] != subject]

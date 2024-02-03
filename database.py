@@ -54,7 +54,7 @@ def create_subjects_db(trim:int):
     CAUTION : it does NOT take into account previous subjects added into the db, use it for the launch of the db or an error will appear relative to the primary key
     """
     subjects_avg = calc_avg_subject(trim)[0]
-    period = trimestre(trim).name
+    period = trimester(trim).name
     for subject in subjects_avg.keys():
         sbj = Subjects(name = subject, avg = subjects_avg[subject], period = period)
         db.session.add(sbj)
@@ -65,7 +65,7 @@ def create_averages_db(trim:int):
     """
     Creation of an element in the table Averages coming from the period (trim)
     """
-    avg = Averages(date = str(datetime.now()), period = trimestre(trim).name, avg_overall = calc_avg_overall(trim))
+    avg = Averages(date = str(datetime.now()), period = trimester(trim).name, avg_overall = calc_avg_overall(trim))
     db.session.add(avg)
     db.session.commit()
     # /!\ returns None
@@ -156,6 +156,7 @@ def extract_period_grades_db(periode):
     grd_list = []
     for grd in all_grd:
         grd_list.append([grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period])
+    return grd_list
 
 
 # *********************
@@ -189,9 +190,9 @@ def update_subjects_db(trim:int):
     existing_subjects_names = set((subject.name, subject.period) for subject in existing_subjects)
     new_subjects = get_subjects(trim)
     subjects_avg = calc_avg_subject(trim)
-    subjects_to_add = [subject for subject in new_subjects if (subject, trimestre(trim).name) not in existing_subjects_names]
+    subjects_to_add = [subject for subject in new_subjects if (subject, trimester(trim).name) not in existing_subjects_names]
     for sbj in subjects_to_add:
-        new_subject = Subjects(name = sbj, avg = subjects_avg[0][sbj], period = trimestre(trim).name, coefficients = subjects_avg[1][sbj])
+        new_subject = Subjects(name = sbj, avg = subjects_avg[0][sbj], period = trimester(trim).name, coefficients = subjects_avg[1][sbj])
         db.session.add(new_subject)
     db.session.commit()
     # /!\ returns None
