@@ -46,6 +46,7 @@ def calc_avg_subject(trim:int):
     """
     trim = trimestre(trim)
     optionnal = {}
+    optionnal_coeff = {}
     coefficients = {}
     averages = {}
     # averages = {subject : grade out of 20}
@@ -54,11 +55,14 @@ def calc_avg_subject(trim:int):
         if grade.grade in ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero"):
             if grade.subject.name not in averages:
                 averages[grade.subject.name] = grade.grade
+                coefficients[grade.subject.name] = grade.coefficient
         elif grade.is_optionnal:
             if grade.subject.name in optionnal:
                 optionnal[grade.subject.name] += note_20(grade)
+                optionnal_coeff[grade.subject.name] += float(grade.coefficient)
             else:
                 optionnal[grade.subject.name] = note_20(grade)
+                optionnal_coeff[grade.subject.name] = float(grade.coefficient)
         elif grade.subject.name in averages and averages[grade.subject.name] not in ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero"):
             if grade.is_bonus and note_20(grade)>10:
                 averages[grade.subject.name] += note_20(grade)
@@ -75,8 +79,12 @@ def calc_avg_subject(trim:int):
                 coefficients[grade.subject.name] = float(grade.coefficient)
     if optionnal != {}:
         for key in optionnal.keys():
-            if optionnal[key] > round(averages[key] / coefficients[key],2):
+            if key not in averages.keys():
+                averages[key] = optionnal[key]
+                coefficients[key] = optionnal_coeff[key]
+            elif optionnal[key] > round(averages[key] / coefficients[key],2):
                 averages[key] += optionnal[key]
+                coefficients[key] += optionnal_coeff[key]
     for key in averages:
         if averages[key] not in ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero"):
             averages[key] = round(averages[key] / coefficients[key],2)

@@ -184,10 +184,10 @@ def update_subjects_db(trim:int):
     existing_subjects = Subjects.query.all()
     existing_subjects_names = set((subject.name, subject.period) for subject in existing_subjects)
     new_subjects = get_subjects(trim)
-    subjects_avg = calc_avg_subject(trim)[0]
+    subjects_avg = calc_avg_subject(trim)
     subjects_to_add = [subject for subject in new_subjects if (subject, trimestre(trim).name) not in existing_subjects_names]
     for sbj in subjects_to_add:
-        new_subject = Subjects(name = sbj, avg = subjects_avg[sbj], period = trimestre(trim).name)
+        new_subject = Subjects(name = sbj, avg = subjects_avg[0][sbj], period = trimestre(trim).name, coefficients = subjects_avg[1][sbj])
         db.session.add(new_subject)
     db.session.commit()
     # /!\ returns None
