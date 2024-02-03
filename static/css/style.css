@@ -19,7 +19,6 @@ body {
     display: inline-block;
     padding-top: 0%;
     margin: 0;
-    pointer-events: none;
 } 
 
 .title {
@@ -38,6 +37,7 @@ body {
     border-style: solid;
     border-image: linear-gradient(to bottom, lightgray, #FAF9F9) 0 2% 100% 2%;
     padding: 0.5rem;
+    pointer-events: none;
 }
 
 .header-items {
@@ -115,13 +115,13 @@ body {
 }
 
 .subject-container {
-    margin: 3% 1.5%;
+    margin: 3% 1.5% 0.5% 1.5%;
     padding: 2%;
     border-radius: 15px;
     background-color: e05c5c;
     display: flex;
     justify-content: space-between;
-    border: lightgray solid 1px;
+    border: lightgray solid 2px;
 }
 
 .subject-icons img {
@@ -174,10 +174,56 @@ body {
     position: absolute;
     height: 80%;
     border: lightgray solid 1px;
+    height: 80%;
     border-right: none;
+}
+
+.scrollable-menu div {
+    pointer-events: none;
 }
 
 .scroll-footer {
     position: relative;
     height: 8%;
+}
+
+.grade-container div,  .grade-container div div {
+    display: inline-block; 
+    position: relative;
+}
+
+.grade-content {
+    margin: 0.5% 5% 0.5% 5%;
+    border-radius: 10px;
+    padding: 0.5% 1%;
+    width: 70%;
+    background-image: linear-gradient(to left, rgb(249, 196, 198), rgb(255, 233, 234));
+}
+
+.grade-coef {
+    border-radius: 50%;
+    height: 2rem;
+    width: 2rem;
+    background-color: #ef6b6b;
+    text-align: center;
+    margin-top: -8%;
+    color: white;
+    visibility: hidden;
+}
+
+.grade-coef h2 {    
+    margin: 5px;
+    font-size: 90%;
+}
+
+.grade-value {
+    margin-right: 5%;
+}
+
+.True {
+    border-left: green 4px solid;
+}
+
+.False {
+    border-left: red 4px solid;
 }

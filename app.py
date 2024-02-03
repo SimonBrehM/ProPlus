@@ -41,7 +41,6 @@ def index():
         try:
             global periods, run_counter_period
             get_data(input_username, input_password)
-            # push_username(input_username)
             periods = get_periods()
             period = periods[get_current_period()]
             run_counter_period = {period:0 for period in periods.values()}
@@ -49,7 +48,7 @@ def index():
             run_counter_period[period] += 1
             get_content_period(get_current_period())
             return render_template('content.html', inputs=inputs, bad_period=bad_period)
-        except pronotepy.exceptions.ENTLoginError:
+        except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
             return render_template('login.html', login_failed=login_failed)
     else:
