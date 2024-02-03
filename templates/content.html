@@ -14,8 +14,12 @@
         <div class="trimester-selector">
             <form action="/period_selector" method="POST">
                 <select name="period_selector" id="period_selector" onchange="this.form.submit()">
-                    {% for period in periods %}
+                    {% for period in inputs.periods %}
+                    {% if period == inputs.current_period %}
+                    <option value="{{ period }}" selected = "selected">{{ period }}</option>
+                    {% else %}
                     <option value="{{ period }}">{{ period }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
             </form>
@@ -24,9 +28,19 @@
             <form action="/update_db" method="post">
                 <input type="submit" value="Update the database">
             </form>
+            <!--
+            <form action="/remove_db" method="POST">
+                <input type="submit" value="Remove the database">
+            </form>
+            -->
         </div>
         <!--Refresh icon-->
     </div>
+    {% if empty_trimester %}
+    <div class="empty-trimester">
+        <p>There are no grades in this trimester</p>
+    </div>
+    {% else %}
     <div class="scrollable-menu">
         {% for subject in inputs.subjects %}
         <div class="subject-container">
@@ -55,6 +69,7 @@
         {% endfor %}
         <div class="scroll-footer"></div>
     </div>
+    {% endif %}
 </div>
 {% endblock %}
 
