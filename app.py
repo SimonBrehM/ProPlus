@@ -83,17 +83,21 @@ def update_db():
     return render_template('content.html', inputs=inputs, bad_period=bad_period)
 
 
-def predict_grade(grade:float, out_of:float, subject:str, period:str):
-    # subject : result from a selector ?, period : auto selected with the /period_selector
-    global inputs, periods
+def predict_grade(grade:float, out_of:float, subject:str):
+    """
+    Returns a tuple with the predicted subject average and the predicted overall average
+    """
+    # subject : result from a selector ?
+    global inputs
+    period = inputs["current_period"]
     subject_avg = [average[1] for average in inputs["subjects"] if average[0] == subject and average[2] == period]
     period_nb = periods[period] # int
     subject_coeff = calc_avg_subject(period_nb)[1][subject] # float | modify creation and extraction functions so it's added to the db and in inputs ?
     new_subject_avg = (subject_avg[0] * subject_coeff + grade) / (subject_coeff + out_of)
     all_avg = [i[1] for i in inputs["subjects"] if i[2] == period and i[0] != subject]
     new_overall_avg = (sum(all_avg) + new_subject_avg) / len(all_avg) + 1
-    return [new_subject_avg, new_overall_avg]
-    # type list
+    return (new_subject_avg, new_overall_avg)
+    # type tuple
 
 if __name__=='__main__':
     app.run(debug=True)

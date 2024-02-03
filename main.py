@@ -215,10 +215,16 @@ def convert_to(grade: float, out_of:float, convert:int):
     # type : float
 
 def calc_avg_evol(avg_old:float,avg_new:float):
+    """
+    Compares two averages and returns the evolution
+    """
     return round((avg_new-avg_old)/avg_old * 100, 2)
     # type : float
 
 def get_periods():
+    """
+    Returns a list with all the periods of the client
+    """
     global client
     periodes = {} ; n=0
     for period in client.periods:
