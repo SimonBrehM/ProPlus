@@ -21,7 +21,7 @@
             </form>
         </div>
         <div class="update-button">
-            <form action="/update_db" method="post">
+            <form action="/update_db" method="POST">
                 <input type="submit" value="Update the database">
             </form>
         </div>
@@ -42,6 +42,14 @@
         </div>
         
         <div class="grades-container">
+            <div class="grade-container suggestive">
+                <form>
+                    <div class="grade-content">
+                        <div class="grade-value sgrade"><input type="text" name="sgrade" onchange="this.form.submit()"> / 20</div>
+                    </div>
+                    <div class="grade-coef scoef"><input type="text" name="scoef" value="1" onchange="this.form.submit()"></div>
+                </form>
+            </div>
             {% for grade in inputs.grades[subject[0]] %}
             <div class="grade-container">
                 <div class="grade-content " style="border-left: {{ grade[4] }} solid 4px;">

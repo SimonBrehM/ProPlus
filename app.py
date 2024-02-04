@@ -2,7 +2,6 @@ from flask import render_template, url_for, request, redirect
 from database import *
 from main import *
 
-login_failed = False
 run_counter = 0
 
 @app.before_request
@@ -34,6 +33,14 @@ def get_content():
 
 @app.route('/', methods=['POST', 'GET'])
 def index():
+    login_failed = request.args.get('login_failed')
+    if login_failed:
+        return render_template("login.html", login_failed=login_failed)
+    else:
+        return render_template("login.html")
+
+@app.route('/content', methods = ['POST', 'GET'])
+def content():
     if request.method == "POST":
         input_username = request.form['username']
         input_password = request.form['password']
@@ -44,11 +51,11 @@ def index():
             run_counter += 1
             get_content()
             return render_template('content.html', inputs=inputs, periods=periods)
-        except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
-            login_failed = True
-            return render_template('login.html', login_failed=login_failed)
+        except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError: 
+            return redirect(url_for('index', login_failed=True))
     else:
-        return render_template("login.html")
+        return "HTTP redirect error"
+
 
 @app.route('/period_selector', methods = ['POST', 'GET'])
 def create_and_consult_db():
