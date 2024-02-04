@@ -24,57 +24,169 @@ def get_data(username, password):
     if not client.logged_in:
         exit(1)  # the client has failed to log in
 
+def get_current_period():
+    return client.current_period.name
 
-def trimestre(n:int):
-    """Function that returns the period we want, coming from a number"""
+def trimester(n:int):
+    """
+    Function that returns the period we want, coming from a number
+    """
     return client.periods[n-1]
     # type : object
 
+def grade_on_20(grade : object):
+    """
+    Returns the grade out of 20
+    """
+    return ((float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient))
+    # type : float
+
 def calc_avg_subject(trim:int):
-    """Calculates the average of the student on every subject for an certain period"""
-    trim = trimestre(trim)
+    """
+    Calculates the average of the student on every subject for an certain period
+    """
+    trim = trimester(trim)
+    optionnal = {}
+    optionnal_coeff = {}
     coefficients = {}
     averages = {}
     # averages = {subject : grade out of 20}
+    # coefficients = {subject : sum of coefficients}
     for grade in trim.grades:
-        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
+        if grade.grade in ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero"):
             if grade.subject.name not in averages:
                 averages[grade.subject.name] = grade.grade
-        elif grade.subject.name in averages and averages[grade.subject.name] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
-            averages[grade.subject.name] += (float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient)
-            coefficients[grade.subject.name] += float(grade.coefficient)
+                coefficients[grade.subject.name] = grade.coefficient
+        elif grade.is_optionnal:
+            if grade.subject.name in optionnal:
+                optionnal[grade.subject.name] += grade_on_20(grade)
+                optionnal_coeff[grade.subject.name] += float(grade.coefficient)
+            else:
+                optionnal[grade.subject.name] = grade_on_20(grade)
+                optionnal_coeff[grade.subject.name] = float(grade.coefficient)
+        elif grade.subject.name in averages and averages[grade.subject.name] not in ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero"):
+            if grade.is_bonus and grade_on_20(grade)>10:
+                averages[grade.subject.name] += grade_on_20(grade)
+                coefficients[grade.subject.name] += float(grade.coefficient)
+            elif grade.is_bonus == False:
+                averages[grade.subject.name] += grade_on_20(grade)
+                coefficients[grade.subject.name] += float(grade.coefficient)
         else:
-            averages[grade.subject.name] = (float(grade.grade.replace(",",".")) / float(grade.out_of.replace(",",".")) * 20) * float(grade.coefficient)
-            coefficients[grade.subject.name] = float(grade.coefficient)
+            if grade.is_bonus and grade_on_20(grade)>10:
+                averages[grade.subject.name] = grade_on_20(grade)
+                coefficients[grade.subject.name] = float(grade.coefficient)
+            elif grade.is_bonus == False:
+                averages[grade.subject.name] = grade_on_20(grade)
+                coefficients[grade.subject.name] = float(grade.coefficient)
+    if optionnal != {}:
+        for key in optionnal.keys():
+            if key not in averages.keys():
+                averages[key] = optionnal[key]
+                coefficients[key] = optionnal_coeff[key]
+            elif optionnal[key] > round(averages[key] / coefficients[key],2):
+                averages[key] += optionnal[key]
+                coefficients[key] += optionnal_coeff[key]
     for key in averages:
         if averages[key] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             averages[key] = round(averages[key] / coefficients[key],2)
-    return averages
+    return averages, coefficients
     # type : dict
 
-
-def calc_overall_avg(trim:int):
-    """Calculates the overall average of the student for a certain period"""
+def calc_avg_overall(trim:int):
+    """
+    Calculates the overall average of the student for a certain period
+    """
     overall_avg = 0
-    for moy in calc_avg_subject(trim).values():
+    for moy in calc_avg_subject(trim)[0].values():
         if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             overall_avg += moy
-    return round(overall_avg / len(calc_avg_subject(trim)), 2)
+    return round(overall_avg / len(calc_avg_subject(trim)[0]), 2)
     # type : float
 
 
+def anal_subjects(sbj_list:list):
+    sbj_dico = {
+        "ABIBAC HG" : "ABIBAC HG",
+        "ACL" : "ACL",
+        "HG BFI ITALOPHONE" : "HG ITALIEN",
+        "HG POLO" : "HG POLONAIS",
+        "HG BRITANNIQUE" : "HG BRITISH",
+        "CDM" : "CDM",
+        "HIST.GEO.EDUC.CIVIQ." : "HISTOIRE-GEO",
+        "ANGLAIS EURO" : "ANGLAIS EURO",
+        "ALLEMAND EURO" : "ALLEMAND EURO",
+        "LITT. ANGLAIS" : "ANGLAIS",
+        "MATHEMATIQUES" : "MATHS",
+        "SCIENCES VIE & TERRE" : "SVT",
+        "SC. ECONO.& SOCIALES" : "SES",
+        "HIST.GEO.GEOPOL.S.P." : "HGGSP",
+        "NUMERIQUE SC. INFORM." : "NSI",
+        "PHYSIQUE-CHIMIE" : "PHYSIQUE-CHIMIE",
+        "EDUCATION MUSICALE" : "MUSIQUE",
+        "ITALIEN LV3" : "ITALIEN LV3",
+        "ESPAGNOL LV3" : "ESPAGNOL LV3",
+        "ARABE LV3" : "ARABE LV3",
+        "FRANCAIS" : "FRANCAIS",
+        "ENSEIGN SCIENTIFIQUE SPC" : "ES PC",
+        "ENSEIGN.SCIENTIFIQUE SVT" : "ES SVT",
+        "ALLEMAND LV2" : "ALLEMAND LV2",
+        "LL ABIBAC" : "LL ABIBAC",
+        "ANGLAIS LV1" : "ANGLAIS LV1",
+        "DNL ANGLAIS SVT" : "DNL SVT",
+        "HG BFI ARABOPHONE" : "HG ARABE",
+        "HIST.GEO AMERICAINE" : "",
+        "HLPHI O" : "",
+        "ANGLAIS LV2" : "",
+        "ACCOMPAGNEMENT. PERSO" : "",
+        "DNL ALL" : "",
+        "HG ESP" : "",
+        "DNL ANGLAIS" : "",
+        "MATHS" : "",
+        "ED.PHYSIQUE & SPORT." : "",
+        "HG PORT." : "",
+        "Soutien LLCE" : "",
+        "ACCOMPAGNEMT. PERSO" : "",
+        "MATHS CHINOIS" : "",
+        "CHINOIS LV3" : "",
+        "FRANCAIS LANGUE SECONDE" : "",
+        "DRAMA" : "",
+        "LL PORTUGAISE" : "",
+        "LL ESPAGNOLE" : "",
+        "LL JAPONAISE" : "",
+        "LL AROBOPHONE" : "",
+        "LL ANGLOPHONE" : "",
+        "HG SEC. ANGLOPHONE" : "",
+        "ACCO PERSO FRANC" : "",
+        "HG JAPO" : "",
+        "ACCO PERSO MATH" : "",
+        "SC.NUMERIQUE.TECHNOL." : "",
+        "DS commun Maths" : "",
+        "LL CHINOIS" : "",
+        "HG ARABOPHONE" : "",
+        "LL ITALIENNE" : "",
+        "HG ITALIENNE" : "",
+        "LITTERAT. LCA LATIN" : "",
+        "LCA LATIN" : "",
+    }
+    
+    return sbj_list
+
 def get_subjects(trim:int):
-    """Returns all the subjects in a list"""
+    """
+    Returns all the subjects in a list
+    """
     subjects = []
-    for x in trimestre(trim).grades:
+    for x in trimester(trim).grades:
         if x.subject.name not in subjects:    
             subjects.append(x.subject.name)
     return subjects 
     # type : list
 
 def anal_grades(trim:int):
-    """Returns a dictionnary of a bunch a specificities on every grade for every subject"""
-    notes_dict = {} ; period = trimestre(trim)
+    """
+    Returns a dictionnary of a bunch a specificities on every grade for every subject
+    """
+    notes_dict = {} ; period = trimester(trim)
     # notes_dict = {subject : [actual grade : float, grade.out_of : float, grade.coefficient : float, grade description : str, is grade good for subject average : bool, is grade over class average : bool, class average : float, subject name : str, period name : str]}
     for grade in period.grades:
         if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
@@ -83,25 +195,40 @@ def anal_grades(trim:int):
             else:
                 notes_dict[grade.subject.name] = [[grade.grade , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, None, None, float(grade.average.replace(",",".")), grade.subject.name, period.name]]
         elif grade.subject.name in notes_dict:
-            notes_dict[grade.subject.name] += [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, 'green' if float(grade.grade.replace(",",".")) >= floor(calc_avg_subject(trim)[grade.subject.name]) else 'red', float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] += [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, 'green' if float(grade.grade.replace(",",".")) >= floor(calc_avg_subject(trim)[0][grade.subject.name]) else 'red', float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
         else:
-            notes_dict[grade.subject.name] = [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, 'green' if float(grade.grade.replace(",",".")) >= floor(calc_avg_subject(trim)[grade.subject.name]) else 'red', float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] = [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, 'green' if float(grade.grade.replace(",",".")) >= floor(calc_avg_subject(trim)[0][grade.subject.name]) else 'red', float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
     return notes_dict
     # type : dict
 
 def convert_to_100(grade:float, out_of:float):
-    """"Returns the parameter (a grade) into a grade out of 100"""
+    """"
+    Returns the parameter (a grade) into a grade out of 100
+    """
     return round(grade / out_of * 100,2)
     # type : float
 
+def convert_to(grade: float, out_of:float, convert:int):
+    """
+    Converts and returns the grade into a desired out of
+    """
+    return round(grade / out_of * convert,2)
+    # type : float
+
 def calc_avg_evol(avg_old:float,avg_new:float):
+    """
+    Compares two averages and returns the evolution
+    """
     return round((avg_new-avg_old)/avg_old * 100, 2)
     # type : float
 
 def get_periods():
+    """
+    Returns a list with all the periods of the client
+    """
     global client
-    periodes = {} ; n=0
+    periods = {} ; n=0
     for period in client.periods:
         n+=1
-        periodes[period.name] = (n)
-    return periodes
+        periods[period.name] = (n)
+    return periods
