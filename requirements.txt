@@ -7,3 +7,4 @@ autoslot
 pronotepy
 flask
 flask_sqlalchemy
+bokeh

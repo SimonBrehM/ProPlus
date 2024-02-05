@@ -178,10 +178,6 @@ body {
     border-right: none;
 }
 
-.scrollable-menu div {
-    pointer-events: none;
-}
-
 .scroll-footer {
     position: relative;
     height: 8%;
@@ -220,10 +216,28 @@ body {
     margin-right: 5%;
 }
 
-.True {
-    border-left: green 4px solid;
+.suggestive-grade-content {
+    margin: 0.5% 5% 0.5% 5%;
+    border-radius: 10px;
+    padding: 0.5% 1%;
+    width: 70%;
+    background-color: lightskyblue;
 }
 
-.False {
-    border-left: red 4px solid;
+/* .suggestive {
+    display: none;
+} */
+
+.sgrade > * {
+    display: inline-block;
+    position: relative;
+}
+
+.suggestive-grade-content input {
+    pointer-events: all !important;
+}
+
+.graph-container {
+    width: 300px;
+    height: 300px;
 }

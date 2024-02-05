@@ -6,7 +6,13 @@
 
 {% block body %}
 <div class="sidebar">
-
+    <h2>Graph</h2>
+    <div class="graph container">
+        {{ inputs.graph[1]|safe }}
+    </div>
+    <script>
+    {{ inputs.graph[0]|safe }}
+    </script>
 </div>
 
 <div class="grade-box">
@@ -34,7 +40,6 @@
             </form>
             -->
         </div>
-        <!--Refresh icon-->
     </div>
     {% if empty_trimester %}
     <div class="empty-trimester">
@@ -43,9 +48,8 @@
     {% else %}
     <div class="scrollable-menu">
         {% for subject in inputs.subjects %}
-        <div class="subject-container">
+        <div class="subject-container {{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}">
             <div class="subject-icons">
-                <!--drop down icon-->
                 <img src="static/img/logo.png" alt="fill-in" id="grade-icon">
             </div>
             <div class="subject-description">
@@ -56,14 +60,19 @@
         </div>
         
         <div class="grades-container">
-            <div class="grade-container suggestive">
-                <form>
-                    <div class="grade-content">
-                        <div class="grade-value sgrade"><input type="text" name="sgrade" onchange="this.form.submit()"> / 20</div>
+            <div class="grade-container suggestive {{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}">
+                <form action="/none" method="POST">
+                    <div class="suggestive-grade-content">
+                        <div class="grade-value sgrade"><input type="text" name="sgrade" onchange="this.form.submit()"><h2> / 20</h2></div>
                     </div>
                     <div class="grade-coef scoef"><input type="text" name="scoef" value="1" onchange="this.form.submit()"></div>
                 </form>
             </div>
+            <style>
+            .subject-container.{{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}:hover .suggestive.{{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}{
+                background-color: red;
+            }
+            </style>
             {% for grade in inputs.grades[subject[0]] %}
             <div class="grade-container">
                 <div class="grade-content " style="border-left: {{ grade[4] }} solid 4px;">

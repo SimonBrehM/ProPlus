@@ -153,9 +153,11 @@ def extract_period_grades_db(periode):
     Extracts elements from the table Grades depending on the period and returns it on the form of a list
     """
     all_grd = Grades.query.filter_by(period=periode).all()
-    grd_list = []
+    grd_list = {}
     for grd in all_grd:
-        grd_list.append([grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period])
+        if grd.subject not in grd_list:
+            grd_list[grd.subject] = []
+        grd_list[grd.subject].append([grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.period])
     return grd_list
 
 

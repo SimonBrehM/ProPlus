@@ -1,13 +1,17 @@
 from flask import render_template, url_for, request, redirect
 from database import *
 from main import *
+from graphs import *
 
+#default values
 login_failed = False
 run_counter_period = None
+inputs = None
+empty_trimester = False
 
 @app.before_request
 def create_tables():
-    db.create_all() #db creation
+    db.create_all() #database creation
 
 def fill_tables_period(period:int): # time loss
     global run_counter_period
@@ -15,10 +19,6 @@ def fill_tables_period(period:int): # time loss
         update_subjects_db(period)
         create_averages_db(period)
         update_grades_db(period)
-
-inputs = None
-empty_trimester = False
-
 
 def get_content_period(period:str): # time loss
     """
@@ -29,9 +29,15 @@ def get_content_period(period:str): # time loss
     grades = extract_period_grades_db(period)
     averages = extract_period_averages_db(period)
     inputs = None
-    inputs = {"subjects":subject_averages, "grades":grades, "averages":averages, "periods":get_periods(), "current_period":get_current_period()}
+    print("---->", averages[-1][2])
+    inputs = {"subjects":subject_averages, 
+              "grades":grades, 
+              "averages":averages, 
+              "periods":get_periods(), 
+              "current_period":get_current_period(),
+              "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20))}
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/', methods=['POST', 'GET']) #root, login page
 def index():
     login_failed = request.args.get('login_failed')
     if login_failed:
@@ -39,7 +45,7 @@ def index():
     else:
         return render_template("login.html")
 
-@app.route('/content', methods = ['POST', 'GET'])
+@app.route('/content', methods = ['POST', 'GET']) #main page
 def content():
     if request.method == "POST":
         input_username = request.form['username']
@@ -56,10 +62,9 @@ def content():
             return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
-            return render_template('login.html', login_failed=login_failed)
+            return redirect(url_for('index', login_failed=login_failed))
     else:
         return "HTTP redirect error"
-
 
 @app.route('/period_selector', methods = ['POST', 'GET'])
 def create_and_consult_db():
@@ -88,12 +93,16 @@ def update_db():
     get_content_period(trimester)
     return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
 
-
 def predict_grade(grade:float, out_of:float, subject:str):
     """
     Returns a tuple with the predicted subject average and the predicted overall average
     """
     # subject : result from a selector ?
+    if grade > out_of:
+        grade = out_of
+    if grade < 0:
+        grade = 0
+    
     global inputs
     period = inputs["current_period"]
     
