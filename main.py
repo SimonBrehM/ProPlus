@@ -128,7 +128,7 @@ def anal_subjects(sbj_list:list):
         "SC. ECONO.& SOCIALES" : ["SES","static/img/icons/w_ses_final.png","static/img/icons/d_ses_final.png"],
         "EMC" : ["EMC","static/img/icons/w_EMC_final.png","static/img/icons/d_EMC_final.png"],
         "HIST.GEO.GEOPOL.S.P." : ["HGGSP","static/img/icons/w_HGGSP_final.png","static/img/icons/d_HGGSP_final.png"],
-        "NUMERIQUE SC. INFORM." :[ "NSI","static/img/icons/w_nsi_final.png","static/img/icons/d_nsi_final.png"],
+        "NUMERIQUE SC.INFORM." :[ "NSI","static/img/icons/w_nsi_final.png","static/img/icons/d_nsi_final.png"],
         "PHYSIQUE-CHIMIE" : ["PHYSIQUE-CHIMIE","static/img/icons/w_p-c_final.png","static/img/icons/d_p-c_final.png"],
         "EDUCATION MUSICALE" : ["MUSIQUE","static/img/icons/w_music_final.png","static/img/icons/d_music_final.png"],
         "ITALIEN LV3" : ["ITALIEN LV3","static/img/icons/w_LV3_ita_final.png","static/img/icons/d_LV3_ita_final.png"],
