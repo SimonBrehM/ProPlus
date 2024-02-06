@@ -237,7 +237,6 @@ body {
     pointer-events: all !important;
 }
 
-.graph-container {
-    width: 300px;
-    height: 300px;
+.bokeh-plot {
+    background-color: #FAF9F9;
 }

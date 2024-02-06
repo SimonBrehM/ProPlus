@@ -1,18 +1,21 @@
 {% extends 'base.html' %}
 
-{% block header %}
+{% block head %}
+<link href="https://cdn.bokeh.org/bokeh/release/bokeh-3.3.4.min.css" rel="stylesheet" type="text/css">
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.3.4.min.js"></script>
+{% endblock %}
 
+{% block header %}
 {% endblock %}
 
 {% block body %}
 <div class="sidebar">
-    <h2>Graph</h2>
-    <div class="graph container">
+    <h4>Moyenne générale</h4>
+    <div class="bokeh-plot">
         {{ inputs.graph[1]|safe }}
     </div>
-    <script>
     {{ inputs.graph[0]|safe }}
-    </script>
+    <h3>{{ inputs.averages[-1][2] }}</h3>
 </div>
 
 <div class="grade-box">
