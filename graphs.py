@@ -25,6 +25,7 @@ def moyenne_graph(current:float, last:float):
     p.xaxis.visible = False
     p.outline_line_color = "#FAF9F9"
     p.background_fill_color = "#FAF9F9"
+    p.border_fill_color = "#FAF9F9"
 
     source = ColumnDataSource(data=dict(stable_start=[stable_start_angle], stable_end=[stable_end_angle], difference_start=[difference_start_angle], difference_end=[difference_end_angle]))
     p.wedge(x=0, y=0, start_angle='stable_start', end_angle='stable_end', radius=0.8, color="#ff5b5b", source=source)
