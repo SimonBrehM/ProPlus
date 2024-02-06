@@ -10,12 +10,14 @@
 
 {% block body %}
 <div class="sidebar">
-    <h4>Moyenne générale</h4>
-    <div class="bokeh-plot">
-        {{ inputs.graph[1]|safe }}
-    </div>
+    <div class="overall-avg-title"><h4>Moyenne générale</h4></div>
+    <div class="graph-container">
+        <div class="bokeh-plot">
+            {{ inputs.graph[1]|safe }}
+        </div>
+    </div>  
     {{ inputs.graph[0]|safe }}
-    <h3>{{ inputs.averages[-1][2] }}</h3>
+    <div class="overall-avg-container"><h3>{{ inputs.averages[-1][2] }} / 20</h3></div>
 </div>
 
 <div class="grade-box">
@@ -53,7 +55,7 @@
         {% for subject in inputs.subjects %}
         <div class="subject-container {{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}">
             <div class="subject-icons">
-                <img src="static/img/logo.png" alt="fill-in" id="grade-icon">
+                <img src="{{ subject[3] }}" alt="fill-in" id="grade-icon">
             </div>
             <div class="subject-description">
                 <h2>{{ subject[0] }}</h2>

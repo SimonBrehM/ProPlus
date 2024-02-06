@@ -144,7 +144,7 @@ def extract_period_subjects_db(periode):
     all_sbj = Subjects.query.filter_by(period=periode).all()
     sbj_list = []
     for sbj in all_sbj:
-        sbj_list.append([sbj.name, sbj.avg, sbj.period])
+        sbj_list.append([anal_subjects([sbj.name])[0][0], sbj.avg, sbj.period, anal_subjects([sbj.name])[0][1]])
     return sbj_list
     # type : list
 
@@ -155,9 +155,9 @@ def extract_period_grades_db(periode):
     all_grd = Grades.query.filter_by(period=periode).all()
     grd_list = {}
     for grd in all_grd:
-        if grd.subject not in grd_list:
-            grd_list[grd.subject] = []
-        grd_list[grd.subject].append([grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.period])
+        if anal_subjects([grd.subject])[0][0] not in grd_list:
+            grd_list[anal_subjects([grd.subject])[0][0]] = []
+        grd_list[anal_subjects([grd.subject])[0][0]].append([grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.period])
     return grd_list
 
 

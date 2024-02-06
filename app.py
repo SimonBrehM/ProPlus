@@ -30,12 +30,15 @@ def get_content_period(period:str): # time loss
     averages = extract_period_averages_db(period)
     inputs = None
     print("---->", averages[-1][2])
-    inputs = {"subjects":subject_averages, 
-              "grades":grades, 
-              "averages":averages, 
-              "periods":get_periods(), 
-              "current_period":get_current_period(),
-              "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20))}
+    inputs = {
+            "subjects": subject_averages, #[[0:subjects name, 1:subject average, 2:trim,3: subject icon path], [ ... ]]
+            "grades": grades, #[[0:grade value, 1:out of?, 2:grade coef, 3:grade desc, 4:grade benef, 5:above class avg?, 6:class avg, 7:trim], [ ... ]]
+            "averages": averages, #[[0:date, 1:trim, 2:overall average], [ ... ]]
+            "periods": get_periods(), 
+            "current_period": get_current_period(),
+            # "graph": moyenne_graph(72, 67)
+            "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20), convert_to_100(float(averages[-2][2]), 20) if len(averages) > 1 else convert_to_100(float(averages[-1][2]), 20))
+            }
 
 @app.route('/', methods=['POST', 'GET']) #root, login page
 def index():
@@ -59,6 +62,7 @@ def content():
             fill_tables_period(period)
             run_counter_period[period] += 1
             get_content_period(get_current_period())
+            print(inputs["grades"])
             return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True

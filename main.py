@@ -207,9 +207,9 @@ def anal_grades(trim:int):
             else:
                 notes_dict[grade.subject.name] = [[grade.grade , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, None, None, float(grade.average.replace(",",".")), grade.subject.name, period.name]]
         elif grade.subject.name in notes_dict:
-            notes_dict[grade.subject.name] += [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, 'green' if grade_on_20(grade) >= floor(calc_avg_subject(trim)[0][grade.subject.name]) else 'red', float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] += [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, '#00BA00' if float(grade.grade.replace(",","."))/float(grade.out_of.replace(",",".")) >= floor(calc_avg_subject(trim)[0][grade.subject.name])/20 else 'red', float(grade.grade.replace(",",".")) > float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
         else:
-            notes_dict[grade.subject.name] = [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, 'green' if grade_on_20(grade) >= floor(calc_avg_subject(trim)[0][grade.subject.name]) else 'red', float(grade.grade.replace(",",".")) >float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] = [[float(grade.grade.replace(",",".")) , float(grade.out_of.replace(",",".")) , float(grade.coefficient.replace(",",".")) , grade.comment, '#00BA00' if float(grade.grade.replace(",","."))/float(grade.out_of.replace(",",".")) >= floor(calc_avg_subject(trim)[0][grade.subject.name])/20 else 'red', float(grade.grade.replace(",",".")) > float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
     return notes_dict
     # type : dict
 

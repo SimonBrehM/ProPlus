@@ -200,11 +200,10 @@ body {
     border-radius: 50%;
     height: 2rem;
     width: 2rem;
-    background-color: #ef6b6b;
+    background-color: #ff5b5b;
     text-align: center;
     margin-top: -8%;
     color: white;
-    visibility: hidden;
 }
 
 .grade-coef h2 {    
@@ -237,6 +236,22 @@ body {
     pointer-events: all !important;
 }
 
-.bokeh-plot {
-    background-color: #FAF9F9;
+.overall-avg-container {
+    padding: 2%;
+    margin: 0 auto;
+    border-radius: 5px;
+    background-color: #ff5b5b;
+    width: fit-content;
+    color: white; 
+}
+
+.graph-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.overall-avg-title {
+    margin: 8% auto 0 auto;
+    width: fit-content;
 }
