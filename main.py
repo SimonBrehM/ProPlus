@@ -176,7 +176,10 @@ def anal_subjects(sbj_list:list):
     }
     sbj_list_clean = []
     for subject in sbj_list:
-        sbj_list_clean.append(sbj_dico[subject])    
+        if subject not in sbj_dico:
+            sbj_list_clean.append([subject,"static/img/icons/w_default_final.png","static/img/icons/d_default_final.png"])
+        else:
+            sbj_list_clean.append(sbj_dico[subject])    
     return sbj_list_clean
     # type : list
 
