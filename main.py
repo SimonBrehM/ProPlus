@@ -97,10 +97,13 @@ def calc_avg_overall(trim:int):
     Calculates the overall average of the student for a certain period
     """
     overall_avg = 0
+    invalid_avg_count = 0
     for moy in calc_avg_subject(trim)[0].values():
         if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             overall_avg += moy
-    return round(overall_avg / len(calc_avg_subject(trim)[0]), 2)
+        else:
+            invalid_avg_count += 1
+    return round(overall_avg / (len(calc_avg_subject(trim)[0]) - invalid_avg_count), 2)
     # type : float
 
 
@@ -173,7 +176,10 @@ def anal_subjects(sbj_list:list):
     }
     sbj_list_clean = []
     for subject in sbj_list:
-        sbj_list_clean.append(sbj_dico[subject])    
+        if subject not in sbj_dico:
+            sbj_list_clean.append([subject,"static/img/icons/w_default_final.png","static/img/icons/d_default_final.png"])
+        else:
+            sbj_list_clean.append(sbj_dico[subject])    
     return sbj_list_clean
     # type : list
 
