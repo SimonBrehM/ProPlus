@@ -31,6 +31,7 @@ def moyenne_graph(current:float, last:float, suggestive:float=None):
     p.xaxis.visible = False
     p.outline_line_color = "#FAF9F9"
     p.background_fill_color = "#FAF9F9"
+    p.border_fill_color = "#FAF9F9"
 
     #Render
     source = ColumnDataSource(data=dict(stable_start=[stable_start_angle], stable_end=[stable_end_angle], difference_start=[difference_start_angle], difference_end=[difference_end_angle]))
