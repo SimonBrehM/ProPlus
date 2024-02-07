@@ -107,7 +107,7 @@ def calc_avg_overall(trim:int):
     # type : float
 
 
-def anal_subjects(sbj_list:list):
+def anal_subjects(sbj_list:list, reverse:bool=False):
     """
     Takes a list of subjects as parameter and return a list of lists containing the corrected name of the subject and the path of the white and dark icons
     """
@@ -182,12 +182,16 @@ def anal_subjects(sbj_list:list):
         "LITTERAT. LCA LATIN" : ["LLCE","static/img/icons/w_LLCE_final.png","static/img/icons/d_LLCE_final.png"],
         "LCA LATIN" : ["LLCE","static/img/icons/w_LLCE_final.png","static/img/icons/d_LLCE_final.png"],
     }
-    sbj_list_clean = []
-    for subject in sbj_list:
-        if subject not in sbj_dico:
-            sbj_list_clean.append([subject,"static/img/icons/w_default_final.png","static/img/icons/d_default_final.png"])
-        else:
-            sbj_list_clean.append(sbj_dico[subject])    
+    if reverse:
+        sbj_dico = {value[0]: key for key, value in sbj_dico.items()}
+        sbj_list_clean = [sbj_dico[sbj] for sbj in sbj_list]
+    else:
+        sbj_list_clean = []
+        for subject in sbj_list:
+            if subject not in sbj_dico:
+                sbj_list_clean.append([subject,"static/img/icons/w_default_final.png","static/img/icons/d_default_final.png"])
+            else:
+                sbj_list_clean.append(sbj_dico[subject])    
     return sbj_list_clean
     # type : list
 
@@ -252,3 +256,6 @@ def get_periods():
         n+=1
         periods[period.name] = (n)
     return periods
+
+def str_to_float(value:str):
+    return float(value.replace(',', '.'))

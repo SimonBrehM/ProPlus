@@ -29,7 +29,6 @@ def get_content_period(period:str): # time loss
     grades = extract_period_grades_db(period)
     averages = extract_period_averages_db(period)
     inputs = None
-    print("---->", averages[-1][2])
     inputs = {
             "subjects": subject_averages, #[[0:subjects name, 1:subject average, 2:trim,3: subject icon path], [ ... ]]
             "grades": grades, #[[0:grade value, 1:out of?, 2:grade coef, 3:grade desc, 4:grade benef, 5:above class avg?, 6:class avg, 7:trim], [ ... ]]
@@ -37,7 +36,8 @@ def get_content_period(period:str): # time loss
             "periods": get_periods(), 
             "current_period": get_current_period(),
             # "graph": moyenne_graph(72, 67)
-            "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20), convert_to_100(float(averages[-2][2]), 20) if len(averages) > 1 else convert_to_100(float(averages[-1][2]), 20))
+            "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20), convert_to_100(float(averages[-2][2]), 20) if len(averages) > 1 else convert_to_100(float(averages[-1][2]), 20)),
+            "suggestives": {}
             }
 
 @app.route('/', methods=['POST', 'GET']) #root, login page
@@ -62,13 +62,53 @@ def content():
             fill_tables_period(period)
             run_counter_period[period] += 1
             get_content_period(get_current_period())
-            print(inputs["grades"])
             return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
             return redirect(url_for('index', login_failed=login_failed))
     else:
         return "HTTP redirect error"
+
+def predict_grade(grade:float, out_of:float, coef:float, subject:str):
+    """
+    Returns a tuple with the predicted subject average and the predicted overall average
+    """
+    # subject : result from a selector ?
+    if grade > out_of:
+        grade = out_of
+    if grade < 0:
+        grade = 0
+    
+    global inputs
+    period = inputs["current_period"]
+    
+    subject_avg = [average[1] for average in inputs["subjects"] if average[0] == subject and average[2] == period]
+    period_nb = inputs["periods"][period] # int
+    
+    print(subject_avg)
+    subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0]] # float | modify creation and extraction functions so it's added to the db and in inputs ?
+    new_subject_avg = (float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + out_of)
+    all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject]
+    new_overall_avg = (sum(all_avg) + new_subject_avg) / len(all_avg) + 1
+
+    return (new_subject_avg, new_overall_avg)
+    # type tuple
+
+@app.route('/suggest', methods = ['POST', 'GET'])
+def suggestive():
+    global inputs, empty_trimester
+
+    grade, coef, subject = request.form['sgrade'], request.form['scoef'], request.form['subject']
+    new_subject_avg, new_overall = predict_grade(str_to_float(grade), 20, str_to_float(coef), subject)
+
+    inputs['graph'] = moyenne_graph(convert_to_100(float(inputs["averages"][-1][2]), 20), None, new_overall)
+    subject_index = (lambda list, subj: [i for i, v in enumerate(list) if v[0] == subj][0])(inputs['subjects'], subject)
+    inputs['subjects'][subject_index][1] = new_subject_avg
+    if subject not in inputs['suggestives']:
+        inputs['suggestives'][subject] = []
+    inputs['suggestives'][subject].append([grade, coef])
+
+    return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
 
 @app.route('/period_selector', methods = ['POST', 'GET'])
 def create_and_consult_db():
@@ -96,30 +136,6 @@ def update_db():
     update_subjects_db(inputs["periods"][trimester])
     get_content_period(trimester)
     return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
-
-def predict_grade(grade:float, out_of:float, subject:str):
-    """
-    Returns a tuple with the predicted subject average and the predicted overall average
-    """
-    # subject : result from a selector ?
-    if grade > out_of:
-        grade = out_of
-    if grade < 0:
-        grade = 0
-    
-    global inputs
-    period = inputs["current_period"]
-    
-    subject_avg = [average[1] for average in inputs["subjects"] if average[0] == subject and average[2] == period]
-    period_nb = inputs["periods"][period] # int
-    
-    subject_coeff = calc_avg_subject(period_nb)[1][subject] # float | modify creation and extraction functions so it's added to the db and in inputs ?
-    new_subject_avg = (subject_avg[0] * subject_coeff + grade) / (subject_coeff + out_of)
-    all_avg = [i[1] for i in inputs["subjects"] if i[2] == period and i[0] != subject]
-    new_overall_avg = (sum(all_avg) + new_subject_avg) / len(all_avg) + 1
-
-    return (new_subject_avg, new_overall_avg)
-    # type tuple
 
 if __name__=='__main__':
     app.run(debug=True)
