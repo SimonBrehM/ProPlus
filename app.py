@@ -86,10 +86,10 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
     period_nb = inputs["periods"][period] # int
     
     print(subject_avg)
-    subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0]] # float | modify creation and extraction functions so it's added to the db and in inputs ?
-    new_subject_avg = (float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + out_of)
-    all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject]
-    new_overall_avg = (sum(all_avg) + new_subject_avg) / len(all_avg) + 1
+    subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0]] # float
+    new_subject_avg = (float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + coef)
+    all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero")]
+    new_overall_avg = (sum(all_avg) + new_subject_avg) / (len(all_avg) + 1)
 
     return (new_subject_avg, new_overall_avg)
     # type tuple
