@@ -154,7 +154,6 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
         "DNL ALL" : ["DNL ALL","static/img/icons/w_LL-ACL_final.png","static/img/icons/d_LL-ACL_final.png"],
         "HG ESP" : ["HG ESP","static/img/icons/w_HG_final.png","static/img/icons/d_HG_final.png"],
         "DNL ANGLAIS" : ["DNL ANGLAIS","static/img/icons/w_LL-ACL_final.png","static/img/icons/d_LL-ACL_final.png"],
-        "MATHS" : ["MATHS","static/img/icons/w_maths_final.png","static/img/icons/d_maths_final.png"],
         "MATHS EXPERTES" : ["MATHEX","static/img/icons/w_mathex_final.png","static/img/icons/d_mathex_final.png"],
         "ED.PHYSIQUE & SPORT." : ["EPS","static/img/icons/w_EPS_final.png","static/img/icons/d_EPS_final.png"],
         "HG PORT." : ["HG PORTUGAIS","static/img/icons/w_HG_final.png","static/img/icons/d_HG_final.png"],

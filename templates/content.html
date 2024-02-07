@@ -17,7 +17,6 @@
         </div>
     </div>  
     {{ inputs.graph[0]|safe }}
-    <div class="overall-avg-container"><h3>{{ inputs.averages[-1][2] }} / 20</h3></div>
 </div>
 
 <div class="grade-box">
@@ -71,9 +70,18 @@
                     <div class="suggestive-grade-content">
                         <div class="grade-value sgrade"><input type="text" name="sgrade" onchange="this.form.submit()"><h2> / 20</h2></div>
                     </div>
-                    <div class="grade-coef scoef"><input type="text" name="scoef" value="1" onchange="this.form.submit()"></div>
+                    <div class="grade-coef scoef"><input type="text" name="scoef" value="1"></div>
                 </form>
             </div>
+            {% for suggestive in inputs.suggestives[subject[0]] %}
+            <div class="grade-container suggestive">
+                    <div class="suggestive-grade-content">
+                        <div class="grade-value sgrade"><h2>{{ suggestive[0] }} / 20</h2></div>
+                    </div>
+                    <div class="grade-coef scoef set"><h2>{{ suggestive[1] }}</h2></div>
+                </form>
+            </div>
+            {% endfor %}
             <style>
             .subject-container.{{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}:hover .suggestive.{{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}{
                 background-color: red;

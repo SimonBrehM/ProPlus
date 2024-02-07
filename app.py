@@ -85,13 +85,12 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
     subject_avg = [average[1] for average in inputs["subjects"] if average[0] == subject and average[2] == period]
     period_nb = inputs["periods"][period] # int
     
-    print(subject_avg)
     subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0]] # float
-    new_subject_avg = (float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + coef)
+    new_subject_avg = round((float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + coef), 2)
     all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero")]
     new_overall_avg = (sum(all_avg) + new_subject_avg) / (len(all_avg) + 1)
 
-    return (new_subject_avg, new_overall_avg)
+    return (new_subject_avg, round(new_overall_avg, 2))
     # type tuple
 
 @app.route('/suggest', methods = ['POST', 'GET'])
@@ -101,7 +100,8 @@ def suggestive():
     grade, coef, subject = request.form['sgrade'], request.form['scoef'], request.form['subject']
     new_subject_avg, new_overall = predict_grade(str_to_float(grade), 20, str_to_float(coef), subject)
 
-    inputs['graph'] = moyenne_graph(convert_to_100(float(inputs["averages"][-1][2]), 20), None, new_overall)
+    inputs['averages'].append([str(datetime.now()), inputs['current_period'], new_overall])
+    inputs['graph'] = moyenne_graph(convert_to_100(float(inputs["averages"][-1][2]), 20), convert_to_100(float(inputs["averages"][-2][2]), 20), True)
     subject_index = (lambda list, subj: [i for i, v in enumerate(list) if v[0] == subj][0])(inputs['subjects'], subject)
     inputs['subjects'][subject_index][1] = new_subject_avg
     if subject not in inputs['suggestives']:
