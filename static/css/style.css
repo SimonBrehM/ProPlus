@@ -38,6 +38,8 @@ body {
     border-image: linear-gradient(to bottom, lightgray, #FAF9F9) 0 2% 100% 2%;
     padding: 0.5rem;
     pointer-events: none;
+    display: flex;
+    justify-content: space-between;
 }
 
 .header-items {
@@ -282,4 +284,21 @@ body {
 
 .update-button {
     margin-right: 20%;
+}
+
+.menu-icon-container {
+    text-align: right;
+}
+
+.menu-actions {
+    display: none !important;
+    position: fixed;
+    width: fit-content;
+    text-align: right;
+    background-color: #FAF9F9;
+    z-index: 1;
+}
+
+.menu-icon-container:hover .menu-actions {
+    display: inline-block !important;
 }

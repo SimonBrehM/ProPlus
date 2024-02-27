@@ -20,7 +20,7 @@ def moyenne_graph(current:float, last:float, suggestive:bool=False):
     if suggestive: difference_color = 'lightskyblue'
     difference_start_angle = stable_end_angle
 
-    text = str(current / 100 * 20) + " / 20"
+    text = str(round(current / 100 * 20, 2)) + " / 20"
 
     #Graph settings
     p = figure(height=350, width=350, title=None, toolbar_location=None, tools="")
