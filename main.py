@@ -114,6 +114,7 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
     sbj_dico = {
         "ABIBAC HG" : ["ABIBAC HG","static/img/icons/w_HG_final.png","static/img/icons/d_HG_final.png"],
         "ACL" : ["ACL","static/img/icons/w_LL-ACL_final.png","static/img/icons/d_LL-ACL_final.png"],
+        "ACL > ACL" : ["ACL","static/img/icons/w_LL-ACL_final.png","static/img/icons/d_LL-ACL_final.png"],
         "HG BFI ITALOPHONE" : ["HG ITALIEN","static/img/icons/w_HG_final.png","static/img/icons/d_HG_final.png"],
         "HG POLO" : ["HG POLONAIS","static/img/icons/w_HG_final.png","static/img/icons/d_HG_final.png"],
         "HG BRITANNIQUE" : ["HG BRITISH","static/img/icons/w_HG_final.png","static/img/icons/d_HG_final.png"],
@@ -149,6 +150,7 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
         "HIST.GEO AMERICAINE > HIST.GEO AMERICAINE" : ["HG AMERICAINE","static/img/icons/w_HG_final.png","static/img/icons/d_HG_final.png"],
         "HLPHI O" : ["HLP","static/img/icons/w_FR-HLP-PHILO_final.png","static/img/icons/d_FR-HLP-PHILO_final.png"],
         "PHILOSOPHIE" : ["PHILO","static/img/icons/w_FR-HLP-PHILO_final.png","static/img/icons/d_FR-HLP-PHILO_final.png"],
+        "PHILOSOPHIE > PHILOSOPHIE" : ["PHILO","static/img/icons/w_FR-HLP-PHILO_final.png","static/img/icons/d_FR-HLP-PHILO_final.png"],
         "ANGLAIS LV2" : ["ANGLAIS LV2","static/img/icons/w_LV2_eng_final.png","static/img/icons/d_LV2_eng_final.png"],
         "ACCOMPAGNEMENT. PERSO" : ["ACC. PERSO","static/img/icons/w_ACC-PERSO_final.png","static/img/icons/d_ACC-PERSO_final.png"],
         "DNL ALL" : ["DNL ALL","static/img/icons/w_LL-ACL_final.png","static/img/icons/d_LL-ACL_final.png"],
