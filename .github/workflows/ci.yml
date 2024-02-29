@@ -1,0 +1,38 @@
+name: Build and Deploy
+
+on:
+    push:
+        branches:
+            - master
+
+    pull_request:
+        branches:
+            - master
+
+    workflow_dispatch:
+
+jobs:
+    test:
+        name: Run integrated test units and linter
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Setup Python 
+              uses: actions/setup-python@v5
+              with:
+                python-version: '3.12'
+            
+            - name: Setup env and install dependencies
+              run: |
+                python -m venv env
+                source env/Scripts/activate
+                python -m pip install --upgrade pip
+                python -m pip install -r requirements.txt
+
+            - name: Run integrated test unit 
+              run: python -m pytest
+
+            - name: Run linter 
+              run: python -m pylint $(git ls-files '*.py')

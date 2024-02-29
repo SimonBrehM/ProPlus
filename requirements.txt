@@ -8,3 +8,5 @@ pronotepy
 flask
 flask_sqlalchemy
 bokeh
+pytest
+pylint
