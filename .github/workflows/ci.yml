@@ -36,15 +36,6 @@ jobs:
               run: |
                 source env/bin/activate
                 python -m pytest
-                PYTEST_EXIT_CODE=$?
-
-                if [ $PYTEST_EXIT_CODE -eq 5 ]; then
-                  echo "No tests were discovered by pytest"
-                  exit 0 
-                elif [ $PYTEST_EXIT_CODE -ne 0 ]; then
-                  echo "An error occurred while running pytest"
-                  exit 1 
-                fi
 
             - name: Run linter 
               run: |
