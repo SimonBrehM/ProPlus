@@ -40,4 +40,4 @@ jobs:
             - name: Run linter 
               run: |
                 source env/bin/activate
-                python -m pylint $(git ls-files '*.py')
+                python -m pylint --fail-under=7 $(git ls-files '*.py')

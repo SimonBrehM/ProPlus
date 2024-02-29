@@ -107,7 +107,7 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
     all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero")]
     new_overall_avg = (sum(all_avg) + new_subject_avg) / (len(all_avg) + 1)
 
-    return (new_subject_avg, round(new_overall_avg, 2))
+    return (round(new_subject_avg, 2), round(new_overall_avg, 2))
     # type tuple
 
 @app.route('/suggest', methods = ['POST', 'GET'])
