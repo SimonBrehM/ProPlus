@@ -11,9 +11,15 @@ empty_trimester = False
 
 @app.before_request
 def create_tables():
+    """
+    Creates database
+    """
     db.create_all() #database creation
 
 def fill_tables_period(period:int): # time loss
+    """
+    Runs database update functions on first run
+    """
     global run_counter_period
     if run_counter_period[period] == 0:
         update_subjects_db(period)
@@ -30,9 +36,22 @@ def get_content_period(period:str): # time loss
     averages = extract_period_averages_db(period)
     inputs = None
     inputs = {
-            "subjects": subject_averages, #[[0:subjects name, 1:subject average, 2:trim,3: subject icon path], [ ... ]]
-            "grades": grades, #[[0:grade value, 1:out of?, 2:grade coef, 3:grade desc, 4:grade benef, 5:above class avg?, 6:class avg, 7:trim], [ ... ]]
-            "averages": averages, #[[0:date, 1:trim, 2:overall average], [ ... ]]
+            "subjects": subject_averages,
+            #[[0:subjects name, 1:subject average, 2:trim,3: subject icon path], [ ... ]]
+            "grades": grades,
+            #[[
+                # 0:grade value,
+                # 1:out of?,
+                # 2:grade coef,
+                # 3:grade desc,
+                # 4:grade benef,
+                # 5:above class avg?,
+                # 6:class avg,
+                # 7:trim
+                # ],
+                # [ ... ]]
+            "averages": averages, 
+            #[[0:date, 1:trim, 2:overall average], [ ... ]]
             "periods": get_periods(), 
             "current_period": get_current_period(),
             # "graph": moyenne_graph(72, 67)
@@ -45,8 +64,7 @@ def index():
     login_failed = request.args.get('login_failed')
     if login_failed:
         return render_template("login.html", login_failed=login_failed)
-    else:
-        return render_template("login.html")
+    return render_template("login.html")
 
 @app.route('/content', methods = ['POST', 'GET']) #main page
 def content():
@@ -66,8 +84,7 @@ def content():
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
             return redirect(url_for('index', login_failed=login_failed))
-    else:
-        return "HTTP redirect error"
+    return "HTTP redirect error"
 
 def predict_grade(grade:float, out_of:float, coef:float, subject:str):
     """
@@ -78,13 +95,13 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
         grade = out_of
     if grade < 0:
         grade = 0
-    
+
     global inputs
     period = inputs["current_period"]
-    
+
     subject_avg = [average[1] for average in inputs["subjects"] if average[0] == subject and average[2] == period]
     period_nb = inputs["periods"][period] # int
-    
+
     subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0]] # float
     new_subject_avg = round((float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + coef), 2)
     all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero")]

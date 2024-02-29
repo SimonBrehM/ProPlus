@@ -1,15 +1,21 @@
+"""
+Determines all database related functions and definitions.
+"""
+from datetime import datetime
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
 from main import *
 # import os
 
 def push_username(username):
+    """
+    Export username from database
+    """
     global uid
     uid = username
-    
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///database.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
 
@@ -19,17 +25,27 @@ db = SQLAlchemy(app)
 # *********************
 
 class Averages(db.Model):
-    date = db.Column(db.String, primary_key=True) # date when the data was inseted, format : YYYY-MM-DD HH-MM-SS.SSSSSS
+    """
+    Averages database object
+    """
+    date = db.Column(db.String, primary_key=True)
+    # date when the data was inseted, format : YYYY-MM-DD HH-MM-SS.SSSSSS
     period = db.Column(db.String)
     avg_overall = db.Column(db.String)
 
 class Subjects(db.Model):
+    """
+    Subjects database object
+    """
     name = db.Column(db.String, primary_key = True)
     avg = db.Column(db.String)
     period = db.Column(db.String, primary_key = True)
     coefficients = db.Column(db.Float)
 
 class Grades(db.Model):
+    """
+    Grades database object
+    """
     id = db.Column(db.Integer, primary_key = True)
     actual_grade = db.Column(db.String)
     out_of = db.Column(db.Float)
@@ -51,7 +67,8 @@ class Grades(db.Model):
 def create_subjects_db(trim:int):
     """
     Creation of all the subjects avilable in the table Subjects
-    CAUTION : it does NOT take into account previous subjects added into the db, use it for the launch of the db or an error will appear relative to the primary key
+    CAUTION : it does NOT take into account previous subjects added into the db,
+    use it for the launch of the db or an error will appear relative to the primary key
     """
     subjects_avg = calc_avg_subject(trim)[0]
     period = trimester(trim).name
@@ -65,7 +82,9 @@ def create_averages_db(trim:int):
     """
     Creation of an element in the table Averages coming from the period (trim)
     """
-    avg = Averages(date = str(datetime.now()), period = trimester(trim).name, avg_overall = calc_avg_overall(trim))
+    avg = Averages(date = str(datetime.now()),
+                   period = trimester(trim).name,
+                   avg_overall = calc_avg_overall(trim))
     db.session.add(avg)
     db.session.commit()
     # /!\ returns None
@@ -73,12 +92,15 @@ def create_averages_db(trim:int):
 def create_grades_db(trim:int):
     """
     Creation of all the grades available in the table Grades coming from the period (trim)
-    CAUTION : it does NOT take into account previous grades added into the db, use it for the launch of the db or you'll insert grades multiples times
+    CAUTION : it does NOT take into account previous grades added into the db,
+    use it for the launch of the db or you'll insert grades multiples times
     """
     all_grades = anal_grades(trim)
     for sbj in all_grades:
         for grd in all_grades[sbj]:
-            grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = grd[7], period = grd[8])
+            grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2],
+                           description = grd[3], benefical = grd[4], above_class_avg = grd[5],
+                           avg_class = grd[6], subject = grd[7], period = grd[8])
             db.session.add(grade)
     db.session.commit()
     # /!\ returns None
@@ -120,15 +142,20 @@ def extract_all_grades_db():
     grd_list = {}
     for grd in all_grd:
         if grd.subject in grd_list:
-            grd_list[grd.subject] += [[grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period, grd.id]]
+            grd_list[grd.subject] += [[grd.actual_grade, grd.out_of, grd.coeff,
+                                       grd.description, grd.benefical, grd.above_class_avg,
+                                       grd.avg_class, grd.subject, grd.period, grd.id]]
         else:
-            grd_list[grd.subject] = [[grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.subject, grd.period, grd.id]]
+            grd_list[grd.subject] = [[grd.actual_grade, grd.out_of, grd.coeff,
+                                      grd.description, grd.benefical, grd.above_class_avg,
+                                      grd.avg_class, grd.subject, grd.period, grd.id]]
     return grd_list
     # type : dict
 
 def extract_period_averages_db(periode):
     """
-    Extracts elements from the table Averages depending on the period and returns it on the form of a list
+    Extracts elements from the table Averages depending on the period
+    and returns it on the form of a list
     """
     all_avg = Averages.query.filter_by(period=periode).all()
     avg_list = []
@@ -139,33 +166,39 @@ def extract_period_averages_db(periode):
 
 def extract_period_subjects_db(periode):
     """
-    Extracts elements from the table Subjects depending on the period and returns it on the form of a list
+    Extracts elements from the table Subjects depending on the period
+    and returns it on the form of a list
     """
     all_sbj = Subjects.query.filter_by(period=periode).all()
     sbj_list = []
     for sbj in all_sbj:
-        sbj_list.append([anal_subjects([sbj.name])[0][0], sbj.avg, sbj.period, anal_subjects([sbj.name])[0][1]])
+        sbj_list.append([anal_subjects([sbj.name])[0][0],
+                         sbj.avg, sbj.period,
+                         anal_subjects([sbj.name])[0][1]])
     return sbj_list
     # type : list
 
 def extract_period_grades_db(periode):
     """
-    Extracts elements from the table Grades depending on the period and returns it on the form of a list
+    Extracts elements from the table Grades depending on the period
+    and returns it on the form of a list
     """
     all_grd = Grades.query.filter_by(period=periode).all()
     grd_list = {}
     for grd in all_grd:
         if anal_subjects([grd.subject])[0][0] not in grd_list:
             grd_list[anal_subjects([grd.subject])[0][0]] = []
-        grd_list[anal_subjects([grd.subject])[0][0]].append([grd.actual_grade, grd.out_of, grd.coeff, grd.description, grd.benefical, grd.above_class_avg, grd.avg_class, grd.period])
+        grd_list[anal_subjects([grd.subject])[0][0]].append([
+            grd.actual_grade, grd.out_of, grd.coeff, grd.description,
+            grd.benefical, grd.above_class_avg, grd.avg_class, grd.period])
     return grd_list
 
 
 # *********************
 # *********************
-"""
-{"grades" : grades {subject: [[actual grade : float, grade.out_of : float, grade.coefficient : float, grade description : str, is grade good for subject average : bool, is grade over class average : bool, class average : float, subject name : str, period name : str]]} }
-"""
+
+
+
 # *********************
 # UPDATING FUNCTIONS
 # *********************
@@ -176,11 +209,20 @@ def update_grades_db(trim:int):
     """
     existing_grades = Grades.query.all()
     new_grades = anal_grades(trim)
-    existing_grade_specs = set((grade.description,grade.subject,grade.period) for grade in existing_grades)
-    grades_to_add = [value for grade in new_grades for value in new_grades[grade] if (value[3],grade,value[8]) not in existing_grade_specs]
+
+    existing_grade_specs = set((grade.description, grade.subject, grade.period)
+                               for grade in existing_grades)
+
+    grades_to_add = [value for grade in new_grades for value in new_grades[grade]
+                     if (value[3], grade, value[8]) not in existing_grade_specs]
+
     for grd in grades_to_add:
-        new_grade = Grades(actual_grade = grd[0], out_of = grd[1], coeff = grd[2], description = grd[3], benefical = grd[4], above_class_avg = grd[5], avg_class = grd[6], subject = grd[7], period = grd[8])
+        new_grade = Grades(actual_grade = grd[0], out_of = grd[1],
+                           coeff = grd[2], description = grd[3], benefical = grd[4],
+                           above_class_avg = grd[5], avg_class = grd[6],
+                           subject = grd[7], period = grd[8])
         db.session.add(new_grade)
+
     db.session.commit()
     # /!\ returns None
 
@@ -192,9 +234,11 @@ def update_subjects_db(trim:int):
     existing_subjects_names = set((subject.name, subject.period) for subject in existing_subjects)
     new_subjects = get_subjects(trim)
     subjects_avg = calc_avg_subject(trim)
-    subjects_to_add = [subject for subject in new_subjects if (subject, trimester(trim).name) not in existing_subjects_names]
+    subjects_to_add = [subject for subject in new_subjects
+                       if (subject, trimester(trim).name) not in existing_subjects_names]
     for sbj in subjects_to_add:
-        new_subject = Subjects(name = sbj, avg = subjects_avg[0][sbj], period = trimester(trim).name, coefficients = subjects_avg[1][sbj])
+        new_subject = Subjects(name = sbj, avg = subjects_avg[0][sbj],
+                               period = trimester(trim).name, coefficients = subjects_avg[1][sbj])
         db.session.add(new_subject)
     db.session.commit()
     # /!\ returns None
