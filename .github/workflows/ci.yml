@@ -33,7 +33,11 @@ jobs:
                 python -m pip list
 
             - name: Run integrated test unit 
-              run: python -m pytest 
+              run: |
+                source env/bin/activate
+                python -m pytest
 
             - name: Run linter 
-              run: python -m pylint $(git ls-files '*.py')
+              run: |
+                source env/bin/activate
+                python -m pylint $(git ls-files '*.py')
