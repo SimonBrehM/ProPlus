@@ -66,7 +66,7 @@ def grade_on_20(grade : object):
     """
     return ((grade_formatting(grade) / grade_formatting(grade) * 20) * float(grade.coefficient))
     # type : float
-
+iterations = 0
 def calc_avg_subject(trim:int):
     """
     Calculates the average of the student on every subject for an certain period
@@ -113,9 +113,15 @@ def calc_avg_subject(trim:int):
             elif optionnal[key] > round(averages[key] / coefficients[key],2):
                 averages[key] += value
                 coefficients[key] += optionnal_coeff[key]
-    for key, value in averages.items():
+    for key, value in averages.items(): # do not use .items or find the way to truly change and access the value
+        print(key, value)
         if value not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
             value = round(value / coefficients[key],2)
+            print(key, value)
+    print(averages)
+    global iterations
+    iterations += 1
+    print(iterations)
     return averages, coefficients
     # type : dict
 
