@@ -1,5 +1,5 @@
 from flask import render_template, url_for, request, redirect
-from database import *
+from database2 import *
 from main import *
 from graphs import *
 
@@ -16,24 +16,24 @@ def create_tables():
     """
     db.create_all() #database creation
 
-def fill_tables_period(period:int): # time loss
+def fill_tables_period(period:int, username:str): # time loss
     """
     Runs database update functions on first run
     """
     global run_counter_period
     if run_counter_period[period] == 0:
-        update_subjects_db(period)
-        create_averages_db(period)
-        update_grades_db(period)
+        # update_subjects_db(period)
+        create_averages_db(period, username)
+        # update_grades_db(period)
 
-def get_content_period(period:str): # time loss
+def get_content_period(period:str, username:str): # time loss
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
     global inputs
-    subject_averages = extract_period_subjects_db(period)
-    grades = extract_period_grades_db(period)
-    averages = extract_period_averages_db(period)
+    subject_averages = calc_avg_subject(period)
+    grades = anal_grades(period)
+    averages = extract_period_averages_db(period, username)
     inputs = None
     inputs = {
             "subjects": subject_averages,
@@ -51,12 +51,13 @@ def get_content_period(period:str): # time loss
                 # ],
                 # [ ... ]]
             "averages": averages, 
-            #[[0:date, 1:trim, 2:overall average], [ ... ]]
+            #[[0:username, 1:date, 2:trim, 3:overall average], [ ... ]]
             "periods": get_periods(), 
             "current_period": get_current_period(),
             # "graph": moyenne_graph(72, 67)
-            "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20), convert_to_100(float(averages[-2][2]), 20) if len(averages) > 1 else convert_to_100(float(averages[-1][2]), 20)),
-            "suggestives": {}
+            "graph": moyenne_graph(convert_to_100(float(averages[-1][3]), 20), convert_to_100(float(averages[-2][3]), 20) if len(averages) > 1 else convert_to_100(float(averages[-1][3]), 20)),
+            "suggestives": {},
+            "username": username
             }
 
 @app.route('/', methods=['POST', 'GET']) #root, login page
@@ -76,10 +77,11 @@ def content():
             get_data(input_username, input_password)
             periods = get_periods()
             period = periods[get_current_period()]
+            period = 2
             run_counter_period = {period:0 for period in periods.values()}
-            fill_tables_period(period)
+            fill_tables_period(period, input_username)
             run_counter_period[period] += 1
-            get_content_period(get_current_period())
+            get_content_period(get_current_period(), input_username)
             return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
@@ -135,9 +137,9 @@ def create_and_consult_db():
             trimester = request.form['period_selector']
             empty_trimester = False
             period = inputs["periods"][trimester]
-            fill_tables_period(period)
+            fill_tables_period(period, inputs["username"])
             run_counter_period[period] += 1
-            get_content_period(trimester)
+            get_content_period(trimester, inputs["username"])
             inputs["current_period"] = trimester
             return render_template('content.html', inputs = inputs, empty_trimester=empty_trimester)
         except ZeroDivisionError:
@@ -149,9 +151,9 @@ def create_and_consult_db():
 def update_db():
     global inputs
     trimester = inputs["current_period"]
-    update_grades_db(inputs["periods"][trimester])
-    update_subjects_db(inputs["periods"][trimester])
-    get_content_period(trimester)
+    # update_grades_db(inputs["periods"][trimester])
+    # update_subjects_db(inputs["periods"][trimester])
+    get_content_period(trimester, inputs["username"])
     return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
 
 if __name__=='__main__':

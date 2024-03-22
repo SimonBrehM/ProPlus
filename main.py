@@ -66,7 +66,7 @@ def grade_on_20(grade : object):
     """
     return ((grade_formatting(grade) / grade_formatting(grade) * 20) * float(grade.coefficient))
     # type : float
-
+iterations = 0
 def calc_avg_subject(trim:int):
     """
     Calculates the average of the student on every subject for an certain period
@@ -76,7 +76,7 @@ def calc_avg_subject(trim:int):
     optionnal_coeff = {}
     coefficients = {}
     averages = {}
-    invalid_grade = ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero")
+    invalid_grade = ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero", "Dispense")
     # averages = {subject : grade out of 20}
     # coefficients = {subject : sum of coefficients}
     for grade in trim.grades:
@@ -113,9 +113,15 @@ def calc_avg_subject(trim:int):
             elif optionnal[key] > round(averages[key] / coefficients[key],2):
                 averages[key] += value
                 coefficients[key] += optionnal_coeff[key]
-    for key, value in averages.items():
-        if value not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
+    for key, value in averages.items(): # do not use .items or find the way to truly change and access the value
+        print(key, value)
+        if value not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
             value = round(value / coefficients[key],2)
+            print(key, value)
+    print(averages)
+    global iterations
+    iterations += 1
+    print(iterations)
     return averages, coefficients
     # type : dict
 
@@ -126,7 +132,7 @@ def calc_avg_overall(trim:int):
     overall_avg = 0
     invalid_avg_count = 0
     for moy in calc_avg_subject(trim)[0].values():
-        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
+        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
             overall_avg += moy
         else:
             invalid_avg_count += 1
@@ -244,7 +250,7 @@ def anal_grades(trim:int):
     period = trimester(trim)
     # notes_dict = {subject : [actual grade : float, grade.out_of : float, grade.coefficient : float, grade description : str, is grade good for subject average : bool, is grade over class average : bool, class average : float, subject name : str, period name : str]}
     for grade in period.grades:
-        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
+        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
             if grade.subject.name in notes_dict:
                 notes_dict[grade.subject.name] += [[grade.grade , out_of_formatting(grade) , coeff_formatting(grade) , grade.comment, None, None, float(grade.average.replace(",",".")), grade.subject.name, period.name]]
             else:
