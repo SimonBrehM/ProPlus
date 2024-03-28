@@ -77,7 +77,6 @@ def content():
             get_data(input_username, input_password)
             periods = get_periods()
             period = periods[get_current_period()]
-            period = 2
             run_counter_period = {period:0 for period in periods.values()}
             fill_tables_period(period, input_username)
             run_counter_period[period] += 1
