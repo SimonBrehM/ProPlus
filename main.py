@@ -114,14 +114,10 @@ def calc_avg_subject(trim:int):
                 averages[key] += value
                 coefficients[key] += optionnal_coeff[key]
     for key, value in averages.items(): # do not use .items or find the way to truly change and access the value
-        print(key, value)
         if value not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
             value = round(value / coefficients[key],2)
-            print(key, value)
-    print(averages)
     global iterations
     iterations += 1
-    print(iterations)
     return averages, coefficients
     # type : dict
 

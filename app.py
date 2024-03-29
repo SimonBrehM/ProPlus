@@ -26,14 +26,15 @@ def fill_tables_period(period:int, username:str): # time loss
         create_averages_db(period, username)
         # update_grades_db(period)
 
-def get_content_period(period:str, username:str): # time loss
+def get_content_period(period:int, username:str): # time loss
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
     global inputs
     subject_averages = calc_avg_subject(period)
     grades = anal_grades(period)
-    averages = extract_period_averages_db(period, username)
+    averages = extract_all_averages_db()
+    print(averages)
     inputs = None
     inputs = {
             "subjects": subject_averages,
@@ -80,7 +81,7 @@ def content():
             run_counter_period = {period:0 for period in periods.values()}
             fill_tables_period(period, input_username)
             run_counter_period[period] += 1
-            get_content_period(get_current_period(), input_username)
+            get_content_period(period, input_username)
             return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
@@ -138,7 +139,7 @@ def create_and_consult_db():
             period = inputs["periods"][trimester]
             fill_tables_period(period, inputs["username"])
             run_counter_period[period] += 1
-            get_content_period(trimester, inputs["username"])
+            get_content_period(period, inputs["username"])
             inputs["current_period"] = trimester
             return render_template('content.html', inputs = inputs, empty_trimester=empty_trimester)
         except ZeroDivisionError:
