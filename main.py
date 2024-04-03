@@ -64,7 +64,7 @@ def grade_on_20(grade : object):
     """
     Returns the grade out of 20
     """
-    return ((grade_formatting(grade) / grade_formatting(grade) * 20) * float(grade.coefficient))
+    return ((grade_formatting(grade) / out_of_formatting(grade) * 20) * float(grade.coefficient))
     # type : float
 
 def calc_avg_subject(trim:int):
@@ -76,7 +76,7 @@ def calc_avg_subject(trim:int):
     optionnal_coeff = {}
     coefficients = {}
     averages = {}
-    invalid_grade = ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero")
+    invalid_grade = ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero", "Dispense")
     # averages = {subject : grade out of 20}
     # coefficients = {subject : sum of coefficients}
     for grade in trim.grades:
@@ -114,8 +114,8 @@ def calc_avg_subject(trim:int):
                 averages[key] += value
                 coefficients[key] += optionnal_coeff[key]
     for key, value in averages.items():
-        if value not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
-            value = round(value / coefficients[key],2)
+        if value not in invalid_grade:
+            averages[key] = round(value / coefficients[key],2)
     return averages, coefficients
     # type : dict
 
@@ -126,7 +126,7 @@ def calc_avg_overall(trim:int):
     overall_avg = 0
     invalid_avg_count = 0
     for moy in calc_avg_subject(trim)[0].values():
-        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
+        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
             overall_avg += moy
         else:
             invalid_avg_count += 1
@@ -151,7 +151,8 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
         "CDM > CDM" : ["CDM",f"{path}w_CDM_final.png",f"{path}d_CDM_final.png"],
         "HIST.GEO.EDUC.CIVIQ." : ["HISTOIRE-GEO",f"{path}w_HG_final.png",f"{path}d_HG_final.png"],
         "ANGLAIS EURO":["ANGLAIS EURO",f"{path}w_EURO_eng_final.png",f"{path}d_EURO_eng_final.png"],
-        "ALLEMAND EURO" : ["ALLEMAND EURO",f"{path}w_EURO_all_final.png",f"{path}d_EURO_all_final.png"],
+        "ALLEMAND EURO" : ["ALLEMAND EURO",f"{path}w_EURO_all_final.png",
+                           f"{path}d_EURO_all_final.png"],
         "LITT. ANGLAIS" : ["ANGLAIS",f"{path}w_LL-ACL_final.png",f"{path}d_LL-ACL_final.png"],
         "MATHEMATIQUES" : ["MATHS",f"{path}w_maths_final.png",f"{path}d_maths_final.png"],
         "SCIENCES VIE & TERRE" : ["SVT",f"{path}w_svt_final.png",f"{path}d_svt_final.png"],
@@ -176,12 +177,15 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
         "DNL ANGLAIS SVT" : ["DNL SVT",f"{path}w_svt_final.png",f"{path}d_svt_final.png"],
         "HG BFI ARABOPHONE" : ["HG ARABE",f"{path}w_HG_final.png",f"{path}d_HG_final.png"],
         "HIST.GEO AMERICAINE" : ["HG AMERICAINE",f"{path}w_HG_final.png",f"{path}d_HG_final.png"],
-        "HIST.GEO AMERICAINE > HIST.GEO AMERICAINE" : ["HG AMERICAINE",f"{path}w_HG_final.png",f"{path}d_HG_final.png"],
+        "HIST.GEO AMERICAINE > HIST.GEO AMERICAINE" : ["HG AMERICAINE",f"{path}w_HG_final.png",
+                                                        f"{path}d_HG_final.png"],
         "HLPHI O" : ["HLP",f"{path}w_FR-HLP-PHILO_final.png",f"{path}d_FR-HLP-PHILO_final.png"],
         "PHILOSOPHIE":["PHILO",f"{path}w_FR-HLP-PHILO_final.png",f"{path}d_FR-HLP-PHILO_final.png"],
-        "PHILOSOPHIE > PHILOSOPHIE" : ["PHILO",f"{path}w_FR-HLP-PHILO_final.png",f"{path}d_FR-HLP-PHILO_final.png"],
+        "PHILOSOPHIE > PHILOSOPHIE" : ["PHILO",f"{path}w_FR-HLP-PHILO_final.png",
+                                       f"{path}d_FR-HLP-PHILO_final.png"],
         "ANGLAIS LV2" : ["ANGLAIS LV2",f"{path}w_LV2_eng_final.png",f"{path}d_LV2_eng_final.png"],
-        "ACCOMPAGNEMENT. PERSO" : ["ACC. PERSO",f"{path}w_ACC-PERSO_final.png",f"{path}d_ACC-PERSO_final.png"],
+        "ACCOMPAGNEMENT. PERSO" : ["ACC. PERSO",f"{path}w_ACC-PERSO_final.png",
+                                   f"{path}d_ACC-PERSO_final.png"],
         "DNL ALL" : ["DNL ALL",f"{path}w_LL-ACL_final.png",f"{path}d_LL-ACL_final.png"],
         "HG ESP" : ["HG ESP",f"{path}w_HG_final.png",f"{path}d_HG_final.png"],
         "DNL ANGLAIS" : ["DNL ANGLAIS",f"{path}w_LL-ACL_final.png",f"{path}d_LL-ACL_final.png"],
@@ -189,7 +193,8 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
         "ED.PHYSIQUE & SPORT." : ["EPS",f"{path}w_EPS_final.png",f"{path}d_EPS_final.png"],
         "HG PORT." : ["HG PORTUGAIS",f"{path}w_HG_final.png",f"{path}d_HG_final.png"],
         "Soutien LLCE" : ["Soutien LLCE",f"{path}w_LLCE_final.png",f"{path}d_LLCE_final.png"],
-        "ACCOMPAGNEMT. PERSO" : ["ACC. PERSO",f"{path}w_ACC-PERSO_final.png",f"{path}d_ACC-PERSO_final.png"],
+        "ACCOMPAGNEMT. PERSO" : ["ACC. PERSO",f"{path}w_ACC-PERSO_final.png",
+                                 f"{path}d_ACC-PERSO_final.png"],
         "MATHS CHINOIS" : ["MATHS CHINOIS",f"{path}w_maths_final.png",f"{path}d_maths_final.png"],
         "CHINOIS LV3":["CHINOIS LV3",f"{path}w_LV3_china_final.png",f"{path}d_LV3_china_final.png"],
         "FRANCAIS LANGUE SECONDE" : ["FLS",f"{path}w_FLS_final.png",f"{path}d_FLS_final.png"],
@@ -200,9 +205,11 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
         "LL AROBOPHONE" : ["LL ARABOPHONE",f"{path}w_LL-ACL_final.png",f"{path}d_LL-ACL_final.png"],
         "LL ANGLOPHONE" : ["LL ANGLOPHONE",f"{path}w_LL-ACL_final.png",f"{path}d_LL-ACL_final.png"],
         "HG SEC. ANGLOPHONE" : ["HG ANGLOPHONE",f"{path}w_HG_final.png",f"{path}d_HG_final.png"],
-        "ACCO PERSO FRANC" : ["ACC PERSO FR",f"{path}w_ACC-PERSO_final.png",f"{path}d_ACC-PERSO_final.png"],
+        "ACCO PERSO FRANC" : ["ACC PERSO FR",f"{path}w_ACC-PERSO_final.png",
+                              f"{path}d_ACC-PERSO_final.png"],
         "HG JAPO" : ["HG JAPONAISE",f"{path}w_HG_final.png",f"{path}d_HG_final.png"],
-        "ACCO PERSO MATH" : ["ACC PERSO MATHS",f"{path}w_ACC-PERSO_final.png",f"{path}d_ACC-PERSO_final.png"],
+        "ACCO PERSO MATH" : ["ACC PERSO MATHS",f"{path}w_ACC-PERSO_final.png",
+                             f"{path}d_ACC-PERSO_final.png"],
         "SC.NUMERIQUE.TECHNOL." : ["SNT",f"{path}w_nsi_final.png",f"{path}d_nsi_final.png"],
         "DS commun Maths" : ["DS MATHS",f"{path}w_maths_final.png",f"{path}d_maths_final.png"],
         "LL CHINOIS" : ["LL CHINOIS",f"{path}w_LL-ACL_final.png",f"{path}d_LL-ACL_final.png"],
@@ -219,7 +226,8 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
         sbj_list_clean = []
         for subject in sbj_list:
             if subject not in sbj_dico:
-                sbj_list_clean.append([subject,f"{path}w_default_final.png",f"{path}d_default_final.png"])
+                sbj_list_clean.append([subject,f"{path}w_default_final.png",
+                                       f"{path}d_default_final.png"])
             else:
                 sbj_list_clean.append(sbj_dico[subject])
     return sbj_list_clean
@@ -242,17 +250,59 @@ def anal_grades(trim:int):
     """
     notes_dict = {}
     period = trimester(trim)
-    # notes_dict = {subject : [actual grade : float, grade.out_of : float, grade.coefficient : float, grade description : str, is grade good for subject average : bool, is grade over class average : bool, class average : float, subject name : str, period name : str]}
+    # notes_dict = {subject :
+    #                       [actual grade : float,
+    #                       grade.out_of : float,
+    #                       grade.coefficient : float,
+    #                       grade description : str,
+    #                       is grade good for subject average : bool,
+    #                       is grade over class average : bool,
+    #                       class average : float,
+    #                       subject name : str,
+    #                       period name : str]
+    #               }
     for grade in period.grades:
-        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero"):
+        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
             if grade.subject.name in notes_dict:
-                notes_dict[grade.subject.name] += [[grade.grade , out_of_formatting(grade) , coeff_formatting(grade) , grade.comment, None, None, float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+                notes_dict[grade.subject.name] += [[grade.grade,
+                                                    out_of_formatting(grade),
+                                                    coeff_formatting(grade),
+                                                    grade.comment,
+                                                    None,
+                                                    None,
+                                                    float(grade.average.replace(",",".")),
+                                                    grade.subject.name,
+                                                    period.name]]
             else:
-                notes_dict[grade.subject.name] = [[grade.grade , out_of_formatting(grade) , coeff_formatting(grade) , grade.comment, None, None, float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+                notes_dict[grade.subject.name] = [[grade.grade,
+                                                   out_of_formatting(grade),
+                                                   coeff_formatting(grade),
+                                                   grade.comment,
+                                                   None,
+                                                   None,
+                                                   float(grade.average.replace(",",".")),
+                                                   grade.subject.name,
+                                                   period.name]]
         elif grade.subject.name in notes_dict:
-            notes_dict[grade.subject.name] += [[grade_formatting(grade) , out_of_formatting(grade) , coeff_formatting(grade) , grade.comment, '#00BA00' if grade_formatting(grade)/out_of_formatting(grade) >= floor(calc_avg_subject(trim)[0][grade.subject.name])/20 else 'red', grade_formatting(grade) > float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] += [[grade_formatting(grade),
+                                                out_of_formatting(grade),
+                                                coeff_formatting(grade),
+                                                grade.comment,
+                                                '#00BA00' if grade_formatting(grade)/out_of_formatting(grade)>=floor(calc_avg_subject(trim)[0][grade.subject.name])/20 else 'red',
+                                                grade_formatting(grade)>float(grade.average.replace(",",".")),
+                                                float(grade.average.replace(",",".")),
+                                                grade.subject.name,
+                                                period.name]]
         else:
-            notes_dict[grade.subject.name] = [[grade_formatting(grade) , out_of_formatting(grade) , coeff_formatting(grade) , grade.comment, '#00BA00' if grade_formatting(grade)/out_of_formatting(grade) >= floor(calc_avg_subject(trim)[0][grade.subject.name])/20 else 'red', grade_formatting(grade) > float(grade.average.replace(",",".")), float(grade.average.replace(",",".")), grade.subject.name, period.name]]
+            notes_dict[grade.subject.name] = [[grade_formatting(grade),
+                                               out_of_formatting(grade),
+                                               coeff_formatting(grade),
+                                               grade.comment,
+                                               '#00BA00' if grade_formatting(grade)/out_of_formatting(grade)>=floor(calc_avg_subject(trim)[0][grade.subject.name])/20 else 'red',
+                                               grade_formatting(grade)>float(grade.average.replace(",",".")),
+                                               float(grade.average.replace(",",".")),
+                                               grade.subject.name,
+                                               period.name]]
     return notes_dict
     # type : dict
 
