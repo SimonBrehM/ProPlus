@@ -73,13 +73,13 @@ def content():
         input_password = request.form['password']
         try:
             global run_counter_period
-            get_data(input_username, input_password)
-            periods = get_periods()
-            period = periods[get_current_period()]
+            get_data(input_username, input_password) # connection to pronote
+            periods = get_periods() # {"period_name" : period_number}
+            period = periods[get_current_period()] # current period number
             run_counter_period = {period:0 for period in periods.values()}
-            fill_tables_period(period)
+            fill_tables_period(period) # filling db's tables
             run_counter_period[period] += 1
-            get_content_period(get_current_period())
+            get_content_period(get_current_period()) # collecting all the data
             return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
@@ -104,7 +104,7 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
 
     subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0]] # float
     new_subject_avg = round((float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + coef), 2)
-    all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero")]
+    all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense")]
     new_overall_avg = (sum(all_avg) + new_subject_avg) / (len(all_avg) + 1)
 
     return (round(new_subject_avg, 2), round(new_overall_avg, 2))
