@@ -23,22 +23,18 @@ def fill_tables_period(period:int, user:str): # time loss
     """
     global run_counter_period
     if run_counter_period[period] == 0:
-        # update_subjects_db(period)
         create_averages_db(period, user)
-        # update_grades_db(period)
 
 def get_content_period(period:str, user:str): # time loss
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
     global inputs
-    # subject_averages = extract_period_subjects_db(period)
     periods = get_periods()
     sbj_avg = calc_avg_subject(periods[period])[0]
     subject_averages = []
     for subject, average in sbj_avg.items():
         subject_averages.append([anal_subjects([subject])[0][0], average, period, anal_subjects([subject])[0][1]])
-    # grades = extract_period_grades_db(period)
     grades = anal_grades(periods[period])
     averages = extract_period_averages_db(period, user)
     inputs = None
@@ -98,7 +94,6 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
     """
     Returns a tuple with the predicted subject average and the predicted overall average
     """
-    # subject : result from a selector ?
     if grade > out_of:
         grade = out_of
     if grade < 0:
@@ -157,8 +152,6 @@ def create_and_consult_db():
 def update_db():
     global inputs, username
     trimester = inputs["current_period"]
-    # update_grades_db(inputs["periods"][trimester])
-    # update_subjects_db(inputs["periods"][trimester])
     get_content_period(trimester, username)
     return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
 
