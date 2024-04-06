@@ -79,7 +79,7 @@ def calc_avg_subject(trim:int):
     optionnal_coeff = {}
     coefficients = {}
     averages = {}
-    invalid_grade = ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero", "Dispense")
+    invalid_grade = ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero","Dispense")
     # averages = {subject : grade out of 20}
     # coefficients = {subject : sum of coefficients}
     for grade in trim.grades:
@@ -128,12 +128,13 @@ def calc_avg_overall(trim:int):
     """
     overall_avg = 0
     invalid_avg_count = 0
-    for moy in calc_avg_subject(trim)[0].values():
-        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
+    avg_subject = calc_avg_subject(trim)[0]
+    for moy in avg_subject.values():
+        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero","Dispense"):
             overall_avg += moy
         else:
             invalid_avg_count += 1
-    return round(overall_avg / (len(calc_avg_subject(trim)[0]) - invalid_avg_count), 2)
+    return round(overall_avg / (len(avg_subject) - invalid_avg_count), 2)
     # type : float
 
 
@@ -262,8 +263,9 @@ def anal_grades(trim:int):
     """
     notes_dict = {}
     period = trimester(trim)
+    avg_subject = calc_avg_subject(trim)[0]
     for grade in period.grades:
-        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
+        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero","Dispense"):
             if anal_subjects([grade.subject.name])[0][0] in notes_dict:
                 notes_dict[anal_subjects([grade.subject.name])[0][0]] += [[grade.grade,
                                                     out_of_formatting(grade),
@@ -287,7 +289,7 @@ def anal_grades(trim:int):
                                                 out_of_formatting(grade),
                                                 coeff_formatting(grade),
                                                 grade.comment,
-                                                '#00BA00' if grade_formatting(grade)/out_of_formatting(grade)>=floor(calc_avg_subject(trim)[0][grade.subject.name])/20 else 'red',
+                                                '#00BA00' if grade_formatting(grade)/out_of_formatting(grade)>=floor(avg_subject[grade.subject.name])/20 else 'red',
                                                 grade_formatting(grade)>float(grade.average.replace(",",".")),
                                                 float(grade.average.replace(",",".")),
                                                 period.name]]
@@ -296,7 +298,7 @@ def anal_grades(trim:int):
                                                out_of_formatting(grade),
                                                coeff_formatting(grade),
                                                grade.comment,
-                                               '#00BA00' if grade_formatting(grade)/out_of_formatting(grade)>=floor(calc_avg_subject(trim)[0][grade.subject.name])/20 else 'red',
+                                               '#00BA00' if grade_formatting(grade)/out_of_formatting(grade)>=floor(avg_subject[grade.subject.name])/20 else 'red',
                                                grade_formatting(grade)>float(grade.average.replace(",",".")),
                                                float(grade.average.replace(",",".")),
                                                period.name]]
