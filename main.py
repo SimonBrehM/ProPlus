@@ -79,7 +79,7 @@ def calc_avg_subject(trim:int):
     optionnal_coeff = {}
     coefficients = {}
     averages = {}
-    invalid_grade = ("Absent","NonNote","Inapte","NonRendu", "AbsentZero", "NonRenduZero", "Dispense")
+    invalid_grade = ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero","Dispense")
     # averages = {subject : grade out of 20}
     # coefficients = {subject : sum of coefficients}
     for grade in trim.grades:
@@ -130,7 +130,7 @@ def calc_avg_overall(trim:int):
     invalid_avg_count = 0
     avg_subject = calc_avg_subject(trim)[0]
     for moy in avg_subject.values():
-        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
+        if moy not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero","Dispense"):
             overall_avg += moy
         else:
             invalid_avg_count += 1
@@ -265,7 +265,7 @@ def anal_grades(trim:int):
     period = trimester(trim)
     avg_subject = calc_avg_subject(trim)[0]
     for grade in period.grades:
-        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense"):
+        if grade.grade in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero","Dispense"):
             if anal_subjects([grade.subject.name])[0][0] in notes_dict:
                 notes_dict[anal_subjects([grade.subject.name])[0][0]] += [[grade.grade,
                                                     out_of_formatting(grade),

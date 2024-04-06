@@ -1,14 +1,15 @@
+""" Modules and files imported """
 from flask import render_template, url_for, request, redirect
 from database2 import *
 from main import *
 from graphs import *
 
 #default values
-login_failed = False
-run_counter_period = None
-inputs = None
-empty_trimester = False
-username = None
+LOGIN_FAILED = False
+RUN_COUNTER_PERIOD = None
+INPUTS = None
+EMPTY_TRIMESTER = False
+USERNAME = None
 
 @app.before_request
 def create_tables():
@@ -21,24 +22,27 @@ def fill_tables_period(period:int, user:str): # time loss
     """
     Runs database update functions on first run
     """
-    global run_counter_period
-    if run_counter_period[period] == 0:
+    global RUN_COUNTER_PERIOD
+    if RUN_COUNTER_PERIOD[period] == 0:
         create_averages_db(period, user)
 
 def get_content_period(period:str, user:str): # time loss
     """
     Extracts data with pronotepy and inserts it into a global dictionnary (inputs)
     """
-    global inputs
+    global INPUTS
     periods = get_periods()
     sbj_avg = calc_avg_subject(periods[period])[0]
     subject_averages = []
     for subject, average in sbj_avg.items():
-        subject_averages.append([anal_subjects([subject])[0][0], average, period, anal_subjects([subject])[0][1]])
+        subject_averages.append([anal_subjects([subject])[0][0],
+                                 average,
+                                 period,
+                                 anal_subjects([subject])[0][1]])
     grades = anal_grades(periods[period])
     averages = extract_period_averages_db(period, user)
-    inputs = None
-    inputs = {
+    INPUTS = None
+    INPUTS = {
             "subjects": subject_averages,
             #[[0:subjects name, 1:subject average, 2:trim,3: subject icon path], [ ... ]]
             "grades": grades,
@@ -58,12 +62,17 @@ def get_content_period(period:str, user:str): # time loss
             "periods": periods, 
             "current_period": get_current_period(),
             # "graph": moyenne_graph(72, 67)
-            "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20), convert_to_100(float(averages[-2][2]), 20) if len(averages) > 1 else convert_to_100(float(averages[-1][2]), 20)),
+            "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20),
+                                   convert_to_100(float(averages[-2][2]), 20) if len(averages) > 1
+                                   else convert_to_100(float(averages[-1][2]), 20)),
             "suggestives": {}
             }
 
 @app.route('/', methods=['POST', 'GET']) #root, login page
 def index():
+    """
+    Connection to the ent
+    """
     login_failed = request.args.get('login_failed')
     if login_failed:
         return render_template("login.html", login_failed=login_failed)
@@ -71,20 +80,23 @@ def index():
 
 @app.route('/content', methods = ['POST', 'GET']) #main page
 def content():
+    """
+    Collects the data and displays it
+    """
     if request.method == "POST":
         input_username = request.form['username']
         input_password = request.form['password']
         try:
-            global run_counter_period, username
+            global RUN_COUNTER_PERIOD, USERNAME
             get_data(input_username, input_password) # connection to pronote
-            username = input_username
+            USERNAME = input_username
             periods = get_periods() # {"period_name" : period_number}
             period = periods[get_current_period()] # current period number
-            run_counter_period = {period:0 for period in periods.values()}
+            RUN_COUNTER_PERIOD = {period:0 for period in periods.values()}
             fill_tables_period(period, input_username) # filling db's tables
-            run_counter_period[period] += 1
+            RUN_COUNTER_PERIOD[period] += 1
             get_content_period(get_current_period(), input_username) # collecting all the data
-            return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
+            return render_template('content.html', inputs=INPUTS, empty_trimester=EMPTY_TRIMESTER)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
             return redirect(url_for('index', login_failed=login_failed))
@@ -99,15 +111,14 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
     if grade < 0:
         grade = 0
 
-    global inputs
-    period = inputs["current_period"]
+    global INPUTS
+    period = INPUTS["current_period"]
 
-    subject_avg = [average[1] for average in inputs["subjects"] if average[0] == subject and average[2] == period]
-    period_nb = inputs["periods"][period] # int
-
+    subject_avg = [average[1] for average in INPUTS["subjects"] if average[0] == subject and average[2] == period]
+    period_nb = INPUTS["periods"][period] # int
     subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0]] # float
-    new_subject_avg = round((float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + coef), 2)
-    all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense")]
+    new_subject_avg = round((float(subject_avg[0])*subject_coeff+grade) / (subject_coeff + coef), 2)
+    all_avg = [float(i[1]) for i in INPUTS["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense")]
     new_overall_avg = (sum(all_avg) + new_subject_avg) / (len(all_avg) + 1)
 
     return (round(new_subject_avg, 2), round(new_overall_avg, 2))
@@ -115,45 +126,54 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
 
 @app.route('/suggest', methods = ['POST', 'GET'])
 def suggestive():
-    global inputs, empty_trimester
+    """
+    Administrates the suggestive grades and displays them
+    """
+    global INPUTS, EMPTY_TRIMESTER
 
     grade, coef, subject = request.form['sgrade'], request.form['scoef'], request.form['subject']
-    new_subject_avg, new_overall = predict_grade(str_to_float(grade), 20, str_to_float(coef), subject)
+    new_subject_avg, new_overall = predict_grade(str_to_float(grade),20,str_to_float(coef),subject)
 
-    inputs['averages'].append([str(datetime.now()), inputs['current_period'], new_overall])
-    inputs['graph'] = moyenne_graph(convert_to_100(float(inputs["averages"][-1][2]), 20), convert_to_100(float(inputs["averages"][-2][2]), 20), True)
-    subject_index = (lambda list, subj: [i for i, v in enumerate(list) if v[0] == subj][0])(inputs['subjects'], subject)
-    inputs['subjects'][subject_index][1] = new_subject_avg
-    if subject not in inputs['suggestives']:
-        inputs['suggestives'][subject] = []
-    inputs['suggestives'][subject].append([grade, coef])
+    INPUTS['averages'].append([str(datetime.now()), INPUTS['current_period'], new_overall])
+    INPUTS['graph'] = moyenne_graph(convert_to_100(float(INPUTS["averages"][-1][2]), 20), convert_to_100(float(INPUTS["averages"][-2][2]), 20), True)
+    subject_index = (lambda list, subj: [i for i, v in enumerate(list) if v[0] == subj][0])(INPUTS['subjects'], subject)
+    INPUTS['subjects'][subject_index][1] = new_subject_avg
+    if subject not in INPUTS['suggestives']:
+        INPUTS['suggestives'][subject] = []
+    INPUTS['suggestives'][subject].append([grade, coef])
 
-    return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
+    return render_template('content.html', inputs=INPUTS, empty_trimester=EMPTY_TRIMESTER)
 
 @app.route('/period_selector', methods = ['POST', 'GET'])
 def create_and_consult_db():
-    global inputs, run_counter_period, empty_trimester, username
+    """
+    Collects the data of a new period to display it
+    """
+    global INPUTS, RUN_COUNTER_PERIOD, EMPTY_TRIMESTER, USERNAME
     if request.method == 'POST':
         try:
             trimester = request.form['period_selector']
-            empty_trimester = False
-            period = inputs["periods"][trimester]
-            fill_tables_period(period, username)
-            run_counter_period[period] += 1
-            get_content_period(trimester, username)
-            inputs["current_period"] = trimester
-            return render_template('content.html', inputs = inputs, empty_trimester=empty_trimester)
+            EMPTY_TRIMESTER = False
+            period = INPUTS["periods"][trimester]
+            fill_tables_period(period, USERNAME)
+            RUN_COUNTER_PERIOD[period] += 1
+            get_content_period(trimester, USERNAME)
+            INPUTS["current_period"] = trimester
+            return render_template('content.html', inputs = INPUTS, empty_trimester=EMPTY_TRIMESTER)
         except ZeroDivisionError:
-            empty_trimester = True
-            inputs["current_period"] = trimester
-            return render_template('content.html', inputs = inputs, empty_trimester=empty_trimester)
+            EMPTY_TRIMESTER = True
+            INPUTS["current_period"] = trimester
+            return render_template('content.html', inputs = INPUTS, empty_trimester=EMPTY_TRIMESTER)
 
 @app.route('/update_db', methods = ['POST', 'GET'])
 def update_db():
-    global inputs, username
-    trimester = inputs["current_period"]
-    get_content_period(trimester, username)
-    return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
+    """
+    Updates the db with the newest data
+    """
+    global INPUTS, USERNAME
+    trimester = INPUTS["current_period"]
+    get_content_period(trimester, USERNAME)
+    return render_template('content.html', inputs=INPUTS, empty_trimester=EMPTY_TRIMESTER)
 
 if __name__=='__main__':
     app.run(debug=True)
