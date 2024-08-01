@@ -6,13 +6,14 @@ class Client:
         self.current_period = current_period
         self.periods = periods #[trimester1, trimester2, ...]
 
-class Trimester:    
+class Trimester:
     def __init__(self, name:str, grades:list):
         self.name = name
         self.grades = grades # [grade1, grade2, ...]
 
 class Grade:
-    def __init__(self, subject:str, grade:str, out_of:str, is_optionnal:bool, is_bonus:bool, coefficient:str, comment:str, average:str = None):
+    def __init__(self, subject:str, grade:str, out_of:str, is_optionnal:bool, 
+                 is_bonus:bool, coefficient:str, comment:str, average:str = None):
         self.subject = subject
         self.grade = grade
         self.out_of = out_of
@@ -56,9 +57,12 @@ sample_client = Client([
         Grade(Subject("Histoire"), str(random.randint(5, 20)), "20", False, False, str(random.randint(1, 6)), "grade5", str(random.randint(5, 20))),
         Grade(Subject("Geographie"), str(random.randint(5, 20)), "20", False, False, str(random.randint(1, 6)), "grade6", str(random.randint(5, 20))),
         Grade(Subject("Anglais"), str(random.randint(5, 20)), "20", False, False, str(random.randint(1, 6)), "grade7", str(random.randint(5, 20))),
-        Grade(Subject("Espagnol"), str(random.randint(5, 20)), "20", False, False, str(random.randint(1, 6)), "grade8", str(random.randint(5, 20))), 
+        Grade(Subject("Espagnol"), str(random.randint(5, 20)), "20", False, False, str(random.randint(1, 6)), "grade8", str(random.randint(5, 20))),
     ])
 )
 
 def unit_test():
+    """
+    Unit test for data_test.py
+    """
     assert True # placeholder until actual unit tests are implemented
