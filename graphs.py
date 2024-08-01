@@ -62,7 +62,7 @@ def moyenne_graph(current:float, last:float, suggestive:bool=False):
 
     p.text(x=0, y=0, text=[text],
            text_align="center", text_baseline="middle", text_color="#ff5b5b",
-           text_font_size="20pt", text_font="Monserrat")
+           text_font_size="25pt", text_font="Monserrat")
 
     script, div = components(p)
     return script, div

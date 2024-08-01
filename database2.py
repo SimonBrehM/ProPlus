@@ -53,7 +53,10 @@ def extract_period_averages_db(periode, username):
     """
     all_avg = Averages.query.filter_by(period=periode, user=username).all()
     avg_list = []
-    for avg in all_avg:
-        avg_list.append([avg.date, avg.period, avg.avg_overall])
+    if not all_avg:
+        avg_list = [[str(datetime.now()), trimester(periode).name, calc_avg_overall(periode)]]
+    else:
+        for avg in all_avg:
+            avg_list.append([avg.date, avg.period, avg.avg_overall])
     return avg_list
     # type : list

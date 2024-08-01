@@ -12,9 +12,10 @@ Determines all main calculations related functions and definitions
 from math import floor
 import pronotepy
 from pronotepy.ent import ent_auvergnerhonealpe
+from data_test import sample_client
 # importing ent specific function, you do not need to import anything if you dont use an ent
 
-CLIENT = None
+CLIENT = sample_client
 
 def get_data(username, password):
     """
@@ -224,7 +225,7 @@ def anal_subjects(sbj_list:list, reverse:bool=False):
     }
     if reverse:
         sbj_dico = {value[0]: key for key, value in sbj_dico.items()}
-        sbj_list_clean = [sbj_dico[sbj] for sbj in sbj_list]
+        sbj_list_clean = [sbj_dico[sbj] if sbj in sbj_dico else [sbj,f"{path}w_default_final.png",f"{path}d_default_final.png"] for sbj in sbj_list]
     else:
         sbj_list_clean = []
         for subject in sbj_list:

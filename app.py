@@ -62,7 +62,7 @@ def get_content_period(period:str, user:str): # time loss
             "periods": periods, 
             "current_period": get_current_period(),
             # "graph": moyenne_graph(72, 67)
-            "graph": moyenne_graph(convert_to_100(float(averages[-1][3]), 20), convert_to_100(float(averages[-2][3]), 20) if len(averages) > 1 else convert_to_100(float(averages[-1][3]), 20)),
+            "graph": moyenne_graph(convert_to_100(float(averages[-1][2]), 20), convert_to_100(float(averages[-2][2]), 20) if len(averages) > 1 else convert_to_100(float(averages[-1][2]), 20)),
             "suggestives": {},
             "username": username
             }
@@ -81,7 +81,7 @@ def content():
         input_password = request.form['password']
         try:
             global run_counter_period, username
-            get_data(input_username, input_password) # connection to pronote
+            # get_data(input_username, input_password) # connection to pronote
             username = input_username
             periods = get_periods() # {"period_name" : period_number}
             period = periods[get_current_period()] # current period number
@@ -111,7 +111,7 @@ def predict_grade(grade:float, out_of:float, coef:float, subject:str):
     subject_avg = [average[1] for average in inputs["subjects"] if average[0] == subject and average[2] == period]
     period_nb = inputs["periods"][period] # int
 
-    subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0]] # float
+    subject_coeff = calc_avg_subject(period_nb)[1][anal_subjects([subject], True)[0][0]] # float
     new_subject_avg = round((float(subject_avg[0]) * subject_coeff + grade) / (subject_coeff + coef), 2)
     all_avg = [float(i[1]) for i in inputs["subjects"] if i[2] == period and i[0] != subject and i[1] not in ("Absent","NonNote","Inapte","NonRendu","AbsentZero","NonRenduZero", "Dispense")]
     new_overall_avg = (sum(all_avg) + new_subject_avg) / (len(all_avg) + 1)
