@@ -6,7 +6,7 @@ class Client:
         self.current_period = current_period
         self.periods = periods #[trimester1, trimester2, ...]
 
-class Trimester:
+class Trimester:    
     def __init__(self, name:str, grades:list):
         self.name = name
         self.grades = grades # [grade1, grade2, ...]
@@ -59,3 +59,6 @@ sample_client = Client([
         Grade(Subject("Espagnol"), str(random.randint(5, 20)), "20", False, False, str(random.randint(1, 6)), "grade8", str(random.randint(5, 20))), 
     ])
 )
+
+def unit_test():
+    pass
