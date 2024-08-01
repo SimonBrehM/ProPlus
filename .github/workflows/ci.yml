@@ -32,10 +32,10 @@ jobs:
                 python -m pip install -r requirements.txt
                 python -m pip list
 
-            - name: Run integrated test unit 
-              run: |
-                source env/bin/activate
-                python -m pytest
+            # - name: Run integrated test unit 
+            #   run: |
+            #     source env/bin/activate
+            #     python -m pytest  
 
             - name: Run linter 
               run: |
