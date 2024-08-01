@@ -61,4 +61,4 @@ sample_client = Client([
 )
 
 def unit_test():
-    pass
+    assert True # placeholder until actual unit tests are implemented
