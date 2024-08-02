@@ -13,6 +13,7 @@ run_counter_period = None
 inputs = None
 empty_trimester = False
 username = None
+from_settings = False
 
 @app.before_request
 def create_tables():
@@ -90,8 +91,17 @@ def content():
     Renders main page
     """
     if request.method == "POST":
-        input_username = request.form['username']
-        input_password = request.form['password']
+        if not from_settings:
+            input_username = request.form['username']
+            input_password = request.form['password']
+            settings = None
+        else:
+            settings = {
+                "theme": request.form['theme'],
+                "unit": request.form['unit'],
+                "feedback": request.form['feedback']
+            }
+            from_settings = False
         try:
             global run_counter_period, username
             # get_data(input_username, input_password) # connection to pronote
@@ -102,6 +112,7 @@ def content():
             fill_tables_period(period, input_username) # filling db's tables
             run_counter_period[period] += 1
             get_content_period(get_current_period(), input_username) # collecting all the data
+            inputs["settings"] = settings 
             return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
         except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
             login_failed = True
@@ -187,6 +198,15 @@ def update_db():
     # update_subjects_db(inputs["periods"][trimester])
     get_content_period(trimester, username)
     return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
+
+@app.route('/settings', methods = ['POST', 'GET'])
+def settings():
+    """
+    Renders settings page
+    """
+    global from_settings
+    from_settings = True
+    return render_template('settings.html')
 
 if __name__=='__main__':
     app.run(debug=True) #runner

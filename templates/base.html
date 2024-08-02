@@ -18,21 +18,15 @@
 
 <body>
     <!--Header zone-->
-    <div class="main-container">
-        <div class="header">
-            <div class="header-items">
-                <img src=static/img/logo.png alt="logo" id="logo">
-                <div class="title">
-                    <h2 id="proplus">ProPlus</h2>
-                    <h3 id="forPronote">for Pronote</h3>
-                </div>
-            </div>
-            {% block header %}{% endblock %} 
+    <div class="header-items">
+        <img src=static/img/logo.png alt="logo" id="logo">
+        <div class="title">
+            <h2 id="proplus">ProPlus</h2>
+            <h3 id="forPronote">for Pronote</h3>
         </div>
-        
-        </div>
-
-        {% block body %}{% endblock %}
+        {% block header %}{% endblock %} 
     </div>
+
+    {% block body %}{% endblock %}
 </body>
 </html>

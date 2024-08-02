@@ -10,11 +10,6 @@ body {
     overflow-y: hidden;
 }
 
-.header div, img {
-    display: inline-block;
-    position: relative;
-}
-
 .title h2, h3 {
     display: inline-block;
     padding-top: 0%;
@@ -23,6 +18,7 @@ body {
 
 .title {
     margin-top: 0.25rem;
+    pointer-events: none;
 }
 
 #forPronote {
@@ -31,25 +27,19 @@ body {
     margin-left: 5px;
 }
 
-.header {
-    /* background-color: #FAF9F9; */
+.header-items {
+    width: 100%;
     border-width: 5px;
     border-style: solid;
     border-image: linear-gradient(to bottom, lightgray, #FAF9F9) 0 2% 100% 2%;
     padding: 0.5rem;
-    pointer-events: none;
     display: flex;
     justify-content: space-between;
 }
 
-.header-items {
-    align-items: center;
-}
-
 #logo {
-    width: 10%;
-    margin-right: 10%;
-    margin-top: -5%;
+    width: 48px;
+    height: 48px;
 }
 
 .login-box {
@@ -226,10 +216,6 @@ body {
     background-color: lightskyblue;
 }
 
-/* .suggestive {
-    display: none;
-} */
-
 .sgrade > * {
     display: inline-block;
     position: relative;
@@ -287,19 +273,93 @@ body {
     margin-right: 20%;
 }
 
-.menu-icon-container {
-    text-align: right;
+.menu-icon {
+    cursor: pointer;
 }
 
-.menu-actions {
-    display: none !important;
-    position: fixed;
-    width: fit-content;
-    text-align: right;
+.dropdown {
+    display: inline-block;
+    position: relative;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    /* width: fit-content; */
     background-color: #FAF9F9;
+    min-width: 160px;
+    margin-left: -200%;
     z-index: 1;
+    align-items: center;
 }
 
-.menu-icon-container:hover .menu-actions {
-    display: inline-block !important;
+.dropdown-content a {
+    display: block;
+    width: fit-content;
+    padding: 5% 25%;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    border: lightgray solid 1px;
+}
+
+.dropdown-content a:hover {
+    background-color: lightgray;
+}
+
+.dropdown:hover .dropdown-content{
+    display: block;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+  }
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #e05c5c;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #e05c5c;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
 }

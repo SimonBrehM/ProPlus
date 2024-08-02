@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block body %}
+    <div class="settings-box">
+        <div class="settings-inputs">
+            <form action="/content" method="POST">
+                <h2>Select theme</h2>
+                <select name="theme" id="theme-input">
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                </select>
+
+                <h2>Change grade unit</h2>
+                <select name="unit" id="unit-input">
+                    <option value="points20">Points /20 (Default)</option>
+                    <option value="points10">Points /10</option>
+                    <option value="percentage">Percentage</option>
+                </select>
+
+                <h2>Include grade feedback</h2>
+                <label class="switch">
+                    <input type="checkbox" name="feedback" id="feedback-input" {% if feedback %}checked{% endif %}>
+                    <span class="slider"></span>
+                </label>
+
+                <input type="submit" value="Save" id="submit-button">
+            </form>
+        </div>
+    </div>
+{% endblock %}
