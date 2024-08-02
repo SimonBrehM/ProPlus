@@ -3,6 +3,9 @@
 {% block head %}
     <link href="https://cdn.bokeh.org/bokeh/release/bokeh-3.3.4.min.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.bokeh.org/bokeh/release/bokeh-3.3.4.min.js"></script>
+    {% if inputs.settings.theme == "dark" %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/dark.css') }}">
+    {% endif %}
 {% endblock %}
 
 {% block header %}
@@ -33,11 +36,11 @@
                 <form action="/period_selector" method="POST">
                     <select name="period_selector" id="period_selector" onchange="this.form.submit()">
                         {% for period in inputs.periods %}
-                        {% if period == inputs.current_period %}
-                        <option value="{{ period }}" selected = "selected">{{ period }}</option>
-                        {% else %}
-                        <option value="{{ period }}">{{ period }}</option>
-                        {% endif %}
+                            {% if period == inputs.current_period %}
+                                <option value="{{ period }}" selected = "selected">{{ period }}</option>
+                            {% else %}
+                                <option value="{{ period }}">{{ period }}</option>
+                            {% endif %}
                         {% endfor %}
                     </select>
                 </form>
@@ -54,57 +57,59 @@
             </div>
         </div>
         {% if empty_trimester %}
-        <div class="empty-trimester">
-            <p>There are no grades in this trimester</p>
-        </div>
+            <div class="empty-trimester">
+                <p>There are no grades in this trimester</p>
+            </div>
         {% else %}
         <div class="scrollable-menu">
             {% for subject in inputs.subjects %}
-            <div class="subject-container {{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}">
-                <div class="subject-icons">
-                    <img src="{{ subject[3] }}" alt="fill-in" id="grade-icon">
-                </div>
-                <div class="subject-description">
-                    <h2>{{ subject[0] }}</h2>
-                    <!-- progress bar -->
-                </div>
-                <div class="subject-average"><h2>{{ subject[1] }}</h2></div>
-            </div>
-            
-            <div class="grades-container">
-                <div class="grade-container suggestive {{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}">
-                    <form action="/suggest" method="POST">
-                        <input type="hidden" name="subject" value="{{ subject[0] }}">
-                        <div class="suggestive-grade-content">
-                            <div class="grade-value sgrade"><input type="text" name="sgrade" onchange="this.form.submit()"><h2> / 20</h2></div>
-                        </div>
-                        <div class="grade-coef scoef"><input type="text" name="scoef" value="1"></div>
-                    </form>
-                </div>
-                {% for suggestive in inputs.suggestives[subject[0]] %}
-                <div class="grade-container suggestive">
-                        <div class="suggestive-grade-content">
-                            <div class="grade-value sgrade"><h2>{{ suggestive[0] }} / 20</h2></div>
-                        </div>
-                        <div class="grade-coef scoef set"><h2>{{ suggestive[1] }}</h2></div>
-                    </form>
-                </div>
-                {% endfor %}
-                <style>
-                .subject-container.{{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}:hover .suggestive.{{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}{
-                    background-color: red;
-                }
-                </style>
-                {% for grade in inputs.grades[subject[0]] %}
-                <div class="grade-container">
-                    <div class="grade-content " style="border-left: {{ grade[4] }} solid 4px;">
-                        <div class="grade-value"><h2>{{ grade[0] }} / {{ grade[1] }}</h2></div>
-                        <div class="grade-description"><h2>{{ grade[3] }}</h2></div>
+                <div class="subject-container {{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}">
+                    <div class="subject-icons">
+                        <img src="{{ subject[3] }}" alt="fill-in" id="grade-icon">
                     </div>
-                    <div class="grade-coef"><h2>{{ grade[2] }}</h2></div>
+                    <div class="subject-description">
+                        <h2>{{ subject[0] }}</h2>
+                        <!-- progress bar -->
+                    </div>
+                    <div class="subject-average"><h2>{{ subject[1] }}</h2></div>
                 </div>
-                {% endfor %}
-            </div>
+                
+                <div class="grades-container">
+                    <div class="grade-container suggestive {{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}">
+                        <form action="/suggest" method="POST">
+                            <input type="hidden" name="subject" value="{{ subject[0] }}">
+                            <div class="suggestive-grade-content">
+                                <div class="grade-value sgrade"><input type="text" name="sgrade" onchange="this.form.submit()"><h2> / 20</h2></div>
+                            </div>
+                            <div class="grade-coef scoef"><input type="text" name="scoef" value="1"></div>
+                        </form>
+                    </div>
+                    {% for suggestive in inputs.suggestives[subject[0]] %}
+                        <div class="grade-container suggestive">
+                                <div class="suggestive-grade-content">
+                                    <div class="grade-value sgrade"><h2>{{ suggestive[0] }} / 20</h2></div>
+                                </div>
+                                <div class="grade-coef scoef set"><h2>{{ suggestive[1] }}</h2></div>
+                            </form>
+                        </div>
+                    {% endfor %}
+                    {% if inputs.settings.feedback %}
+                    <style>
+                    .subject-container.{{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}:hover .suggestive.{{ subject[0]|replace(" " , "_")|replace(".","_")|replace(">", "_") }}{
+                        background-color: red;
+                    }
+                    </style>
+                    {% endif %}
+                    {% for grade in inputs.grades[subject[0]] %}
+                        <div class="grade-container">
+                            <div class="grade-content " style="border-left: {{ grade[4] }} solid 4px;">
+                                <div class="grade-value"><h2>{{ grade[0] }} / {{ grade[1] }}</h2></div>
+                                <div class="grade-description"><h2>{{ grade[3] }}</h2></div>
+                            </div>
+                            <div class="grade-coef"><h2>{{ grade[2] }}</h2></div>
+                        </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
             <div class="scroll-footer"></div>
         </div>

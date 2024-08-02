@@ -14,6 +14,11 @@ inputs = None
 empty_trimester = False
 username = None
 from_settings = False
+settings = {
+    "theme": "light",
+    "unit": "points20",
+    "feedback": True
+}
 
 @app.before_request
 def create_tables():
@@ -94,7 +99,10 @@ def content():
         if not from_settings:
             input_username = request.form['username']
             input_password = request.form['password']
-            settings = None
+                "theme": "light",
+                "unit": "points20",
+                "feedback": True
+            }
         else:
             settings = {
                 "theme": request.form['theme'],
@@ -206,7 +214,7 @@ def settings():
     """
     global from_settings
     from_settings = True
-    return render_template('settings.html')
+    return render_template('settings.html', settings=settings)
 
 if __name__=='__main__':
     app.run(debug=True) #runner
