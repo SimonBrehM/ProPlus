@@ -95,36 +95,36 @@ def content():
     """
     Renders main page
     """
+    global from_settings, inputs, empty_trimester
     if request.method == "POST":
         if not from_settings:
             input_username = request.form['username']
             input_password = request.form['password']
-                "theme": "light",
-                "unit": "points20",
-                "feedback": True
-            }
+            try:
+                global run_counter_period, username, settings
+                # get_data(input_username, input_password) # connection to pronote
+                username = input_username
+                periods = get_periods() # {"period_name" : period_number}
+                period = periods[get_current_period()] # current period number
+                run_counter_period = {period:0 for period in periods.values()}
+                fill_tables_period(period, input_username) # filling db's tables
+                run_counter_period[period] += 1
+                get_content_period(get_current_period(), input_username) # collecting all the data
+                inputs["settings"] = settings
+                return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
+            except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
+                login_failed = True
+                return redirect(url_for('index', login_failed=login_failed))
         else:
             settings = {
                 "theme": request.form['theme'],
                 "unit": request.form['unit'],
-                "feedback": request.form['feedback']
+                "feedback": request.form.get('feedback', False)
             }
             from_settings = False
-        try:
-            global run_counter_period, username
-            # get_data(input_username, input_password) # connection to pronote
-            username = input_username
-            periods = get_periods() # {"period_name" : period_number}
-            period = periods[get_current_period()] # current period number
-            run_counter_period = {period:0 for period in periods.values()}
-            fill_tables_period(period, input_username) # filling db's tables
-            run_counter_period[period] += 1
-            get_content_period(get_current_period(), input_username) # collecting all the data
-            inputs["settings"] = settings 
+            inputs["settings"] = settings
+            print(inputs["settings"])
             return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
-        except pronotepy.exceptions.ENTLoginError and pronotepy.exceptions.PronoteAPIError:
-            login_failed = True
-            return redirect(url_for('index', login_failed=login_failed))
     return "HTTP redirect error"
 
 def predict_grade(grade:float, out_of:float, coef:float, subject:str):
@@ -158,7 +158,7 @@ def suggestive():
     """
     Renders main page with suggestive grade
     """
-    global inputs, empty_trimester
+    global inputs, empty_trimester, settings
 
     grade, coef, subject = request.form['sgrade'], request.form['scoef'], request.form['subject']
     new_subject_avg, new_overall = predict_grade(str_to_float(grade), 20, str_to_float(coef), subject)
@@ -171,6 +171,7 @@ def suggestive():
     if subject not in inputs['suggestives']:
         inputs['suggestives'][subject] = []
     inputs['suggestives'][subject].append([grade, coef])
+    inputs["settings"] = settings
 
     return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
 
@@ -179,7 +180,7 @@ def create_and_consult_db():
     """
     Renders main page with modified period
     """
-    global inputs, run_counter_period, empty_trimester, username
+    global inputs, run_counter_period, empty_trimester, username, settings
     if request.method == 'POST':
         try:
             trimester = request.form['period_selector']
@@ -189,6 +190,7 @@ def create_and_consult_db():
             run_counter_period[period] += 1
             get_content_period(trimester, username)
             inputs["current_period"] = trimester
+            inputs["settings"] = settings
             return render_template('content.html', inputs = inputs, empty_trimester=empty_trimester)
         except ZeroDivisionError:
             empty_trimester = True
@@ -200,11 +202,12 @@ def update_db():
     """
     Refreshes the database
     """
-    global inputs, username
+    global inputs, username, settings
     trimester = inputs["current_period"]
     # update_grades_db(inputs["periods"][trimester])
     # update_subjects_db(inputs["periods"][trimester])
     get_content_period(trimester, username)
+    inputs["settings"] = settings
     return render_template('content.html', inputs=inputs, empty_trimester=empty_trimester)
 
 @app.route('/settings', methods = ['POST', 'GET'])
@@ -212,9 +215,16 @@ def settings():
     """
     Renders settings page
     """
-    global from_settings
+    global from_settings, settings
     from_settings = True
     return render_template('settings.html', settings=settings)
 
 if __name__=='__main__':
     app.run(debug=True) #runner
+
+@app.route('/credits', methods = ['POST', 'GET'])
+def credits():
+    """
+    Renders credits page
+    """
+    return render_template('credits.html')

@@ -5,6 +5,7 @@
 {% endblock %}
 
 {% block body %}
+    <h2 class="settings-title">Settings</h2>
     <div class="settings-box">
         <div class="settings-inputs">
             <form action="/content" method="POST">
@@ -21,11 +22,13 @@
                     <option value="percentage">Percentage</option>
                 </select>
 
-                <h2>Include grade feedback</h2>
-                <label class="switch">
-                    <input type="checkbox" name="feedback" id="feedback-input" {% if settings.feedback %}checked{% endif %}>
-                    <span class="slider"></span>
-                </label>
+                <h2 id="feedback-text">Include grade feedback</h2>
+                <div class="switch-container">
+                    <label class="switch">
+                        <input type="checkbox" name="feedback" id="feedback-input" {% if settings.feedback %}checked{% endif %}>
+                        <span class="slider"></span>
+                    </label>
+                </div>
 
                 <input type="submit" value="Save" id="submit-button">
             </form>
